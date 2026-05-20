@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Sandbox</title>
+</head>
+<body>
+
+    <h1>Backend API Sandbox</h1>
+    <p>This page is used for testing backend API endpoints.</p>
+
+    <hr>
+
+    <!-- REGISTER -->
+    <h3>Register</h3>
+    <p>POST /api/register</p>
+    <input type="email" id="register_email" placeholder="Email"><br><br>
+    <input type="password" id="register_password" placeholder="Password"><br><br>
+    <button onclick="registerUser()">Register</button>
+    <pre id="register_result"></pre>
+
+    <hr>
+
+    <!-- LOGIN -->
+    <h3>Login</h3>
+    <p>POST /api/login</p>
+    <input type="email" id="login_email" placeholder="Email"><br><br>
+    <input type="password" id="login_password" placeholder="Password"><br><br>
+    <button onclick="loginUser()">Login</button>
+    <pre id="login_result"></pre>
+
+    <hr>
+
+    <!-- BUY TICKET -->
+    <h3>Buy Ticket</h3>
+    <p>POST /api/buy</p>
+    <input type="text" id="buy_user_id" placeholder="User ID"><br><br>
+    <input type="text" id="event_name" placeholder="Event Name"><br><br>
+    <button onclick="buyTicket()">Buy Ticket</button>
+    <pre id="buy_result"></pre>
+
+    <hr>
+
+    <!-- GET TICKETS -->
+    <h3>My Tickets</h3>
+    <p>GET /api/tickets?user_id=ID</p>
+    <input type="text" id="tickets_user_id" placeholder="User ID"><br><br>
+    <button onclick="getTickets()">Get Tickets</button>
+    <pre id="tickets_result"></pre>
+
+    <hr>
+
+    <!-- AI SUGGEST -->
+    <h3>AI Suggest</h3>
+    <p>GET /api/ai_suggest</p>
+    <button onclick="getAISuggest()">Get AI Suggestion</button>
+    <pre id="ai_result"></pre>
+
+    <hr>
+
+    <script>
+        let currentUserId = null;
+
+        async function registerUser() {
+            const email = document.getElementById("register_email").value;
+            const password = document.getElementById("register_password").value;
+
+            const response = await fetch("/api/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+            document.getElementById("register_result").textContent =
+                JSON.stringify(data, null, 2);
+        }
+
+        async function loginUser() {
+            const email = document.getElementById("login_email").value;
+            const password = document.getElementById("login_password").value;
+
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (data.user_id) {
+                currentUserId = data.user_id;
+                document.getElementById("buy_user_id").value = currentUserId;
+                document.getElementById("tickets_user_id").value = currentUserId;
+            }
+
+            document.getElementById("login_result").textContent =
+                JSON.stringify(data, null, 2);
+        }
+
+        async function buyTicket() {
+            // важно: преобразуем строку в число
+            const userId = parseInt(document.getElementById("buy_user_id").value, 10);
+            const eventName = document.getElementById("event_name").value;
+
+            const response = await fetch("/api/buy", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user_id: userId,          // теперь число
+                    event_name: eventName
+                })
+            });
+
+            const data = await response.json();
+            document.getElementById("buy_result").textContent =
+                JSON.stringify(data, null, 2);
+        }
+
+        async function getTickets() {
+            const userId = parseInt(document.getElementById("tickets_user_id").value, 10);
+
+            const response = await fetch(
+                "/api/tickets?user_id=" + encodeURIComponent(userId)
+            );
+
+            const data = await response.json();
+            document.getElementById("tickets_result").textContent =
+                JSON.stringify(data, null, 2);
+        }
+
+        async function getAISuggest() {
+            const response = await fetch("/api/ai_suggest");
+            const data = await response.json();
+            document.getElementById("ai_result").textContent =
+                JSON.stringify(data, null, 2);
+        }
+    </script>
+
+</body>
+</html>

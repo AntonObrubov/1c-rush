@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1C Rush — Тренажёр</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+
+        body {
+            background: #0B0B0F !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .header,
+        .header *,
+        .header-container,
+        .logo,
+        .logo-text,
+        .nav,
+        .nav-link,
+        .auth-area,
+        .auth-area * {
+            all: revert !important;           
+            box-sizing: border-box;
+        }
+
+        .header {
+            background: rgba(11, 11, 15, 0.9) !important;
+            backdrop-filter: blur(8px) !important;
+            border-bottom: 1px solid #23232C !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 10 !important;
+            font-family: 'Inter', sans-serif !important;  /* ШРИФТ КАК НА ГЛАВНОЙ */
+        }
+        .header-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            height: 70px !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 24px !important;
+        }
+        .logo-text {
+            font-size: 1.8rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            background: linear-gradient(135deg, #FFFFFF, #98C3F8) !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            color: transparent !important;
+        }
+        .nav {
+            display: flex !important;
+            gap: 28px !important;
+        }
+        .nav-link {
+            color: #A1A1B0 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: 0.2s !important;
+            font-size: 0.95rem !important;
+            background: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: #98C3F8 !important;
+        }
+        /* БЛОК АВТОРИЗАЦИИ — ИСПРАВЛЯЕМ ВЫРАВНИВАНИЕ */
+        .auth-area {
+            background: #1A1A24 !important;
+            padding: 6px 14px !important;
+            border-radius: 40px !important;
+            font-size: 0.85rem !important;
+            border: 1px solid #2E2E3A !important;
+            display: inline-flex !important;     /* вместо flex */
+            align-items: center !important;
+            gap: 10px !important;
+            width: auto !important;              /* не растягивается */
+            min-width: auto !important;          /* убираем фикс. ширину */
+            justify-content: center !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+        }
+        .auth-area a {
+            color: #98C3F8 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            background: none !important;
+            border-radius: 0 !important;
+        }
+        .auth-area button {
+            background: none !important;
+            border: none !important;
+            color: #F87171 !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+        /* 4. Контейнер тренажёра – оставляем стили из style.css (через класс .practic-container) */
+        .practic-container {
+            max-width: 1300px;
+            margin: 30px auto 0 auto;
+            background: #1F1F1F;
+            border-radius: 24px;
+            padding: 25px;
+            border: 1px solid #333;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+        }
+        /* 5. Убеждаемся, что кнопки тренажёра остались круглыми (как в style.css) */
+        .button-group button,
+        .hint-copy-btn {
+            border-radius: 40px !important;
+            font-family: Consolas, monospace !important;
+        }
+        /* ======= ФИКС РАЗМЕРА АВАТАРКИ В ШАПКЕ (добавлен) ======= */
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+        .user-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+        }
+        .user-badge {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }
+        .user-name {
+            font-weight: 500 !important;
+            color: #E2E2E8 !important;
+        }
+        .logout-btn {
+            background: none !important;
+            border: 1px solid #F87171 !important;
+            color: #F87171 !important;
+            padding: 4px 12px !important;
+            border-radius: 20px !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+        }
+        .logout-btn:hover {
+            background: #F87171 !important;
+            color: white !important;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body data-page="practical">
+    <div class="wrapper">
+        <!-- ===== ШАПКА ТОЧНО КАК НА ГЛАВНОЙ ===== -->
+        <header class="header">
+            <div class="container header-container">
+                <div class="logo">
+                    <a href="../index.html" style="text-decoration: none;">
+                        <span class="logo-text">1C Rush</span>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <a href="../index.html" class="nav-link">Главная</a>
+                    <a href="practical.html" class="nav-link active">Тренажёр</a>
+                    <a href="../textbook/pages/variables.html" class="nav-link">Справочник</a>
+                    <a href="../profile.html" class="nav-link">Профиль</a>
+                </nav>
+                <div class="auth-area" id="authArea"></div>
+            </div>
+        </header>
+
+        <!-- ТРЕНАЖЁР (без футера) -->
+        <main class="main">
+            <div class="practic-container">
+                <h1>1С Rush</h1>
+                <h2 id="taskTitle">Задание</h2>
+
+                <div class="editor-wrapper">
+                    <textarea id="codeEditor" name="code"></textarea>
+                </div>
+
+                <div class="progress">
+                    Вопрос <span id="currentIndexSpan">1</span> из <span id="totalTasksSpan">0</span>
+                </div>
+
+                <div class="button-group">
+                    <button id="prevBtn">◀ Предыдущий</button>
+                    <button id="nextBtn">Следующий ▶</button>
+                    <button id="checkBtn">Проверить</button>
+                    <button id="resetBtn">⟳ Сбросить</button>
+                    <button id="fullHintBtn">Показать решение</button>
+                </div>
+
+                <div id="resultArea" class="result-box">
+                    <!-- Сообщения будут появляться здесь -->
+                </div>
+
+                <div id="fullHintArea" class="hint-full" style="display: none;">
+                    <div class="hint-title">Решение</div>
+                    <div id="fullHintContent"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Скрипты -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="tasks/tasks.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

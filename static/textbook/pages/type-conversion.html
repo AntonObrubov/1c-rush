@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>1C Rush — Преобразование типов</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    
+    <style>
+        /* Стили для изоляции шапки от стилей теории (аналогично практике) */
+        body {
+            background: #0B0B0F !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        /* Шапка и всё внутри — сброс стилей теории */
+        .header,
+        .header * {
+            all: revert !important;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .header {
+            background: rgba(11, 11, 15, 0.9) !important;
+            backdrop-filter: blur(8px) !important;
+            border-bottom: 1px solid #23232C !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+        }
+        .header-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            height: 70px !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 24px !important;
+        }
+        .logo-text {
+            font-size: 1.8rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            background: linear-gradient(135deg, #FFFFFF, #98C3F8) !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            color: transparent !important;
+        }
+        .nav {
+            display: flex !important;
+            gap: 28px !important;
+        }
+        .nav-link {
+            color: #A1A1B0 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: 0.2s !important;
+            font-size: 0.95rem !important;
+            background: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: #98C3F8 !important;
+        }
+        .auth-area {
+            background: #1A1A24 !important;
+            padding: 6px 14px !important;
+            border-radius: 40px !important;
+            font-size: 0.85rem !important;
+            border: 1px solid #2E2E3A !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: auto !important;
+            min-width: auto !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+        }
+        .auth-area a {
+            color: #98C3F8 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            background: none !important;
+            border-radius: 0 !important;
+        }
+        .auth-area button {
+            background: none !important;
+            border: none !important;
+            color: #F87171 !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+        /* Сдвигаем боковую панель и основной контент вниз, чтобы не перекрывались шапкой */
+        .sidebar {
+            position: fixed !important;
+            top: 70px !important;
+            left: 0 !important;
+            height: calc(100vh - 70px) !important;
+            overflow-y: auto !important;
+        }
+        .main-content {
+            margin-left: 280px !important;
+            padding-top: 90px !important;  /* отступ сверху, чтобы контент не уходил под шапку */
+        }
+        
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+        .user-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+        }
+        .user-badge {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }
+        .user-name {
+            font-weight: 500 !important;
+            color: #E2E2E8 !important;
+        }
+        .logout-btn {
+            background: none !important;
+            border: 1px solid #F87171 !important;
+            color: #F87171 !important;
+            padding: 4px 12px !important;
+            border-radius: 20px !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+        }
+        .logout-btn:hover {
+            background: #F87171 !important;
+            color: white !important;
+        }
+    </style>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+    <!-- ===== ШАПКА ИЗ ПРАКТИКИ ===== -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../../index.html" style="text-decoration: none;">
+                    <span class="logo-text">1C Rush</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="../../index.html" class="nav-link">Главная</a>
+                <a href="../../practical-tasks/practical.html" class="nav-link">Тренажёр</a>
+                <a href="conditions.html" class="nav-link active">Справочник</a>
+                <a href="../../profile.html" class="nav-link">Профиль</a>
+            </nav>
+            <div class="auth-area" id="authArea"></div>
+        </div>
+    </header>
+
+    <!-- ========== БОКОВАЯ ПАНЕЛЬ ========== -->
+    <nav class="sidebar">
+        <a href="variables.html">Переменные</a>
+
+        <div class="dropdown-toggle">
+            <span>Типы данных</span>
+            <span class="arrow">▸</span>
+        </div>
+        <div class="submenu">
+            <a href="strings.html">Строки</a>
+            <a href="numbers.html">Числа</a>
+            <a href="dates.html">Дата</a>
+            <a href="booleans.html">Булево</a>
+        </div>
+
+        <a href="type-conversion.html">Преобразование типов</a>
+        <a href="conditions.html">Условные операторы</a>
+        <a href="loops.html">Циклы</a>
+        <a href="functions-procedure.html">Процедуры и функции</a>
+        <a href="array.html">Массивы</a>
+    </nav>
+
+
+    <div class="main-content">
+
+        <div class="guide-container">
+
+            <h1>1C Rush > Преобразование типов</h1>
+
+            <h3>Зачем нужно преобразовывать типы?</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        В 1С:Предприятие используется <strong><a href="https://ru.ruwiki.ru/wiki/Динамическая_типизация" target="_blank" class="wiki-link">динамическая типизация</a></strong> — переменная сама получает тип в момент присваивания значения. 
+                        Однако часто возникает необходимость явно преобразовать данные из одного типа в другой: 
+                        строку — в число для расчётов, число — в строку для вывода сообщения, дату — в строку для отчёта и т.д. 
+                        Также платформа выполняет <strong>неявные преобразования</strong> в арифметических операциях, когда операнды имеют разные типы.
+                    </p>
+                </div>
+            </div>
+
+            <h3>Функции явного преобразования</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Встроенные функции преобразования позволяют безопасно привести значение к нужному типу.
+                    </p>
+                </div>
+            </div>
+
+            <h4 style="margin-left: 30px;">1. Преобразование в число</h4>
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p style="margin-left: 80px;">
+                        Функция <code class="inline-code"><span class="cm-variable">Число</span><span class="cm-operator">(</span><span class="cm-operator">)</span></code> преобразует строку или булево значение в число. 
+                        Если строка содержит целое или дробное число (разделитель – точка или запятая), преобразование успешно. 
+                        <span class="cm-keyword-purple">Истина</span> превращается в <span class="cm-number">1</span>, <span class="cm-keyword-purple">Ложь</span> – в <span class="cm-number">0</span>. 
+                        Недопустимые строки вызывают ошибку.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>Строка1 = "120";
+Строка2 = "12.24";
+Строка3 = "12,24";
+Строка4 = "0000001";
+
+Число1 = Число(Строка1);     // 120
+Число2 = Число(Строка2);     // 12.24
+Число3 = Число(Строка3);     // 12.24
+Число4 = Число(Строка4);     // 1
+
+б_Истина = Истина;
+б_Ложь   = Ложь;
+
+ч_Истина = Число(б_Истина);  // 1
+ч_Ложь   = Число(б_Ложь);    // 0</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h4 style="margin-left: 30px;">2. Преобразование в строку</h4>
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p style="margin-left: 80px;">
+                        <code class="inline-code"><span class="cm-variable">Строка</span><span class="cm-operator">(</span><span class="cm-operator">)</span></code> преобразует любое значение в его строковое представление согласно региональным настройкам. 
+                        Для чисел она вставляет пробелы между разрядами, что не всегда удобно. 
+                        Функция <code class="inline-code"><span class="cm-variable">Формат</span><span class="cm-operator">(</span><span class="cm-operator">)</span></code> даёт полный контроль над форматом.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>Число1 = 23123456;
+СтрокаОбычная = Строка(Число1);        // "23 123 456" (с пробелами)
+
+// Без пробелов (ЧГ="")
+СтрокаБезПробелов = Формат(Число1, "ЧГ=");   // "23123456"
+
+// Булево в строку
+СтрокаИстина = Строка(Истина);        // "Да" (зависит от настроек)
+СтрокаЛожь   = Строка(Ложь);          // "Нет"
+
+// Дата в строку
+Текущая = ТекущаяДата();
+СтрокаДата = Строка(Текущая);         // "07.06.2026 14:30:00"</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h4 style="margin-left: 30px;">3. Преобразование в дату</h4>
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p style="margin-left: 80px;">
+                        Функция <code class="inline-code"><span class="cm-variable">Дата</span><span class="cm-operator">(</span><span class="cm-operator">)</span></code> преобразует строку в дату. 
+                        Строка обязательно должна быть в формате <span class="cm-string-single">'ГГГГММДДЧЧММСС'</span> (часть с временем можно опустить). 
+                        Также существует вариант передачи числовых компонентов: <span class="cm-variable">Дата</span><span class="cm-operator">(</span>Год, Месяц, День, Час, Минута, Секунда<span class="cm-operator">)</span>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>СтрокаДата1 = "20250606";
+СтрокаДата2 = "20250606143000";
+
+Дата1 = Дата(СтрокаДата1);                // 06.06.2025 00:00:00
+Дата2 = Дата(СтрокаДата2);                // 06.06.2025 14:30:00
+Дата3 = Дата(2025, 6, 6, 14, 30, 0);      // то же самое
+
+// Ошибка, если формат неверный:
+// Неверная = Дата("25.06.06");</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h4 style="margin-left: 30px;">4. Преобразование в булево</h4>
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p style="margin-left: 80px;">
+                        Функция <code class="inline-code"><span class="cm-variable">Булево</span><span class="cm-operator">(</span><span class="cm-operator">)</span></code> преобразует число, строку или булево значение в тип <span class="cm-keyword-purple">Булево</span>. 
+                        Число <span class="cm-number">0</span> даёт <span class="cm-keyword-purple">Ложь</span>, любое другое число – <span class="cm-keyword-purple">Истина</span>. 
+                        Строки <span class="cm-string-double">"Да"</span>, <span class="cm-string-double">"Истина"</span> преобразуются в <span class="cm-keyword-purple">Истина</span>, 
+                        строки <span class="cm-string-double">"Нет"</span>, <span class="cm-string-double">"Ложь"</span> – в <span class="cm-keyword-purple">Ложь</span> (без учёта регистра).
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>б1 = Булево(0);            // Ложь
+б2 = Булево(100);          // Истина
+б3 = Булево("Да");         // Истина
+б4 = Булево("Нет");        // Ложь
+б5 = Булево("Истина");     // Истина
+б6 = Булево("Ложь");       // Ложь
+б7 = Булево(Истина);       // Истина</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Неявные преобразования в выражениях</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        В арифметических операциях (<span class="cm-operator">+</span>, <span class="cm-operator">-</span>, <span class="cm-operator">*</span>, <span class="cm-operator">/</span>) и сравнениях 1С может автоматически преобразовывать типы. 
+                        Тип результата обычно определяется по <strong>первому операнду</strong>. 
+                        Ниже приведены основные правила.
+                    </p>
+                </div>
+            </div>
+
+            <div class="transparent-table cm-s-monokai">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Тип первого операнда</th>
+                            <th>Добавление операнда</th>
+                            <th>Вывод</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="cm-string-double">"абв"</span> (Строка)</td>
+                            <td><code class="inline-code"><span class="cm-string-double">"абв"</span> <span class="cm-operator">+</span> <span class="cm-number">2</span></code></td>
+                            <td>Строка: <span class="cm-string-double">"абв2"</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="cm-string-double">"2"</span> (Строка)</td>
+                            <td><code class="inline-code"><span class="cm-string-double">"2"</span> <span class="cm-operator">+</span> <span class="cm-number">2</span></code></td>
+                            <td>Строка: <span class="cm-string-double">"22"</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="cm-string-double">"2"</span> (Строка)</td>
+                            <td><code class="inline-code"><span class="cm-string-double">"2"</span> <span class="cm-operator">-</span> <span class="cm-number">2</span></code></td>
+                            <td>Число: <span class="cm-number">0</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="cm-string-double">"2"</span> (Строка)</td>
+                            <td><code class="inline-code"><span class="cm-string-double">"2"</span> <span class="cm-operator">/</span> <span class="cm-number">2</span></code></td>
+                            <td>Число: <span class="cm-number">1</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="cm-number">2</span> (Число)</td>
+                            <td><code class="inline-code"><span class="cm-number">2</span> <span class="cm-operator">+</span> <span class="cm-keyword-purple">Истина</span></code></td>
+                            <td>Число: <span class="cm-number">3</span> (Истина=1)</td>
+                        </tr>
+                        <tr>
+                            <td><span class="cm-number">2</span> (Число)</td>
+                            <td><code class="inline-code"><span class="cm-number">2</span> <span class="cm-operator">*</span> <span class="cm-keyword-purple">Ложь</span></code></td>
+                            <td>Число: <span class="cm-number">0</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="cm-number">2</span> (Число)</td>
+                            <td><code class="inline-code"><span class="cm-number">2</span> <span class="cm-operator">+</span> <span class="cm-string-double">"2"</span></code></td>
+                            <td>Число: <span class="cm-number">4</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="cm-string-single">'20250606'</span> (Дата)</td>
+                            <td><code class="inline-code"><span class="cm-string-single">'20250606'</span> <span class="cm-operator">+</span> <span class="cm-number">86400</span></code></td>
+                            <td>Дата: <span class="cm-string-single">07.06.2025 00:00:00</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="cm-string-single">'20250606'</span> (Дата)</td>
+                            <td><code class="inline-code"><span class="cm-string-single">'20250606'</span> <span class="cm-operator">-</span> <span class="cm-string-single">'20250605'</span></code></td>
+                            <td>Число: <span class="cm-number">86400</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="cm-keyword-purple">Истина</span> (Булево)</td>
+                            <td><code class="inline-code"><span class="cm-keyword-purple">Истина</span> <span class="cm-operator">+</span> <span class="cm-number">2</span></code></td>
+                            <td>Число: <span class="cm-number">3</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../../js/app.js"></script>
+</body>
+</html>

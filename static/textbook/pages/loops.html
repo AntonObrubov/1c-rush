@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>1C Rush — Циклы</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    
+    <style>
+        /* Стили для изоляции шапки от стилей теории */
+        body {
+            background: #0B0B0F !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        /* Шапка и всё внутри — сброс стилей теории */
+        .header,
+        .header * {
+            all: revert !important;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .header {
+            background: rgba(11, 11, 15, 0.9) !important;
+            backdrop-filter: blur(8px) !important;
+            border-bottom: 1px solid #23232C !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+        }
+        .header-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            height: 70px !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 24px !important;
+        }
+        .logo-text {
+            font-size: 1.8rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            background: linear-gradient(135deg, #FFFFFF, #98C3F8) !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            color: transparent !important;
+        }
+        .nav {
+            display: flex !important;
+            gap: 28px !important;
+        }
+        .nav-link {
+            color: #A1A1B0 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: 0.2s !important;
+            font-size: 0.95rem !important;
+            background: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: #98C3F8 !important;
+        }
+        .auth-area {
+            background: #1A1A24 !important;
+            padding: 6px 14px !important;
+            border-radius: 40px !important;
+            font-size: 0.85rem !important;
+            border: 1px solid #2E2E3A !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: auto !important;
+            min-width: auto !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+        }
+        .auth-area a {
+            color: #98C3F8 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            background: none !important;
+            border-radius: 0 !important;
+        }
+        .auth-area button {
+            background: none !important;
+            border: none !important;
+            color: #F87171 !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+        /* Сдвигаем боковую панель и основной контент вниз, чтобы не перекрывались шапкой */
+        .sidebar {
+            position: fixed !important;
+            top: 70px !important;
+            left: 0 !important;
+            height: calc(100vh - 70px) !important;
+            overflow-y: auto !important;
+        }
+        .main-content {
+            margin-left: 280px !important;
+            padding-top: 90px !important;
+        }
+        
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+        .user-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+        }
+        .user-badge {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }
+        .user-name {
+            font-weight: 500 !important;
+            color: #E2E2E8 !important;
+        }
+        .logout-btn {
+            background: none !important;
+            border: 1px solid #F87171 !important;
+            color: #F87171 !important;
+            padding: 4px 12px !important;
+            border-radius: 20px !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+        }
+        .logout-btn:hover {
+            background: #F87171 !important;
+            color: white !important;
+        }
+    </style>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+    <!-- ===== ШАПКА ===== -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../../index.html" style="text-decoration: none;">
+                    <span class="logo-text">1C Rush</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="../../index.html" class="nav-link">Главная</a>
+                <a href="../../practical-tasks/practical.html" class="nav-link">Тренажёр</a>
+                <a href="conditions.html" class="nav-link active">Справочник</a>
+                <a href="../../profile.html" class="nav-link">Профиль</a>
+            </nav>
+            <div class="auth-area" id="authArea"></div>
+        </div>
+    </header>
+
+    <!-- ========== БОКОВАЯ ПАНЕЛЬ ========== -->
+    <nav class="sidebar">
+        <a href="variables.html">Переменные</a>
+
+        <div class="dropdown-toggle">
+            <span>Типы данных</span>
+            <span class="arrow">▸</span>
+        </div>
+        <div class="submenu">
+            <a href="strings.html">Строки</a>
+            <a href="numbers.html">Числа</a>
+            <a href="dates.html">Дата</a>
+            <a href="booleans.html">Булево</a>
+        </div>
+
+        <a href="type-conversion.html">Преобразование типов</a>
+        <a href="conditions.html">Условные операторы</a>
+        <a href="loops.html">Циклы</a>
+        <a href="functions-procedure.html">Процедуры и функции</a>
+        <a href="array.html">Массивы</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="guide-container">
+
+            <h1>1C Rush > Циклы</h1>
+
+            <h3>Что такое цикл?</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        <strong><a href="https://ru.ruwiki.ru/wiki/Цикл_(программирование)" target="_blank" class="wiki-link">Цикл</a></strong> – это конструкция, которая позволяет выполнить один и тот же блок кода многократно. 
+                        Например, вывести числа от 1 до 10, обработать все строки таблицы, заполнить массив значениями. 
+                        В 1С:Предприятие есть три вида циклов: 
+                    </p>
+                    <br>
+                    <p>
+                        <strong>Цикл по счётчику</strong> (с фиксированным количеством повторений).
+                    </p>
+                    <p>
+                        <strong>Цикл по коллекции</strong> (обход коллекции) 
+                    </p>
+                    <p>
+                        <strong>Цикл по условию</strong> (выполняется пока истинно условие).
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block animated"
+                 data-examples='[
+                    "//Цикл по счётчику\nДля Счётчика = 1 По 5 Цикл\n   //...\nКонецЦикла;",
+                    "//Цикл по коллекции\nДля каждого X Из У Цикл\n   //...\nКонецЦикла;",
+                    "//Цикл по условию\nПока Счётчик <= 5 Цикл\n   Счётчик = Счётчик + 1;\nКонецЦикла;"
+                 ]'>
+                <textarea></textarea>
+            </div>
+            
+            <h3>Цикл по счётчику</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Цикл выполняет блок кода заданное количество раз. Управляет им специальная переменная — счётчик. 
+                        В заголовке цикла указываются начальное и конечное значения счётчика. 
+                        На каждой итерации счётчик автоматически увеличивается на 1, пока не превысит конечное значение. 
+                        Как только счётчик становится больше конечного значения, цикл завершается. 
+                        Если начальное значение больше конечного, тело цикла не выполнится ни разу.
+                        Пишется в виде 
+
+                        <code class="inline-code">
+                            <span class="cm-keyword-purple">Для</span> <span class="cm-operator"><</span><span class="cm-variable">Счётчик</span><span class="cm-operator">></span> <span class="cm-operator"> = </span>
+                            <span class="cm-operator"><</span><span class="cm-variable">НачальноеЗначение</span><span class="cm-operator">></span> <span class="cm-keyword-purple">По </span>
+                            <span class="cm-operator"><</span><span class="cm-variable">КонечноеЗначение</span><span class="cm-operator">></span> <span class="cm-keyword-purple">Цикл</span>
+                        </code>
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>// Простейший цикл: вывести числа от 1 до 5
+Для Счётчик = 1 По 5 Цикл
+    Сообщить(Счётчик);  // 1, 2, 3, 4, 5
+КонецЦикла;
+
+// Заполнение массива числами от -10 до 20
+МассивЧисел = Новый Массив;
+Для ЧислоДляМассива = -10 По 20 Цикл
+    МассивЧисел.Добавить(ЧислоДляМассива);
+КонецЦикла;
+
+// Обратный проход по массиву с помощью индексов (массив.Количество() - 1)
+Для Индекс = 0 По МассивЧисел.ВГраница() Цикл
+    Сообщить(МассивЧисел[Индекс]);
+КонецЦикла;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Цикл по коллекции</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Цикл по коллекции используется для перебора элементов коллекции (массива, списка, таблицы значений и т.д.). 
+                        Он не требует знания индексов — на каждом шаге переменная автоматически получает очередной элемент коллекции. 
+                        <br>
+                        Пишется конструкция так: 
+                        <code class="inline-code">
+                            <span class="cm-keyword-purple">Для каждого</span> <span class="cm-operator"><</span><span class="cm-variable">Элемент</span><span class="cm-operator">></span>
+                            <span class="cm-keyword-purple">Из</span>
+                            <span class="cm-operator"><</span><span class="cm-variable">Коллекция</span><span class="cm-operator">></span> <span class="cm-keyword-purple">Цикл</span>
+                        </code>.
+                        Затем идёт тело цикла (действия с элементом), а завершается всё ключевым словом <span class="cm-keyword-purple">КонецЦикла</span>. Такой цикл удобен, когда нужно обработать все элементы подряд, не заботясь о количестве шагов.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>// Создаём массив дней недели
+Дни = Новый Массив;
+Дни.Добавить("Понедельник");
+Дни.Добавить("Вторник");
+Дни.Добавить("Среда");
+Дни.Добавить("Четверг");
+Дни.Добавить("Пятница");
+
+// Перебираем каждый элемент массива
+Для каждого День Из Дни Цикл
+    Сообщить(День);
+КонецЦикла;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Цикл по условию</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Цикл Пока … Цикл выполняется до тех пор, пока логическое выражение истинно. 
+                        Проверка условия происходит перед каждой итерацией. Если условие ложно с самого начала, цикл не выполнится ни разу. Пишется конструкция так: 
+                            <code class="inline-code">
+                                <span class="cm-keyword-purple">Пока</span> <span class="cm-operator"><</span><span class="cm-variable">ЛогическоеВыражение</span><span class="cm-operator">></span> <span class="cm-keyword-purple">Цикл</span>
+                            </code>. <strong>Важно:</strong> чтобы цикл не стал бесконечным, внутри него должно быть действие, которое рано или поздно сделает условие ложным (например, увеличение счётчика или изменение проверяемой переменной).
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>// Пример 1: вывести числа от 1 до 5
+Счётчик = 1;
+Пока Счётчик <= 5 Цикл
+    Сообщить(Счётчик);
+    Счётчик = Счётчик + 1;   // без этой строки цикл будет бесконечным
+КонецЦикла;
+
+// Пример 2: перебор массива с помощью Пока
+Дни = Новый Массив;
+Дни.Добавить("Пн");
+Дни.Добавить("Вт");
+Дни.Добавить("Ср");
+
+Индекс = 0;
+Пока Индекс < Дни.Количество() Цикл
+    Сообщить(Дни[Индекс]);
+    Индекс = Индекс + 1;
+КонецЦикла;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Управление ходом цикла</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p style="margin-bottom: 15px;">
+                        Иногда нужно досрочно выйти из цикла или пропустить текущую итерацию. Для этого служат два оператора <span class="cm-keyword-purple">Прервать</span> и <span class="cm-keyword-purple">Продолжить</span>.
+                    </p>
+
+                    <h4 style="margin-left: 30px;">1. Прервать</h4>
+                    <p style="margin-left: 80px;">
+                        Немедленно завершает выполнение цикла. Управление передаётся оператору, следующему за <span class="cm-keyword-purple">КонецЦикла</span>. 
+                        Используется, когда дальнейшее выполнение цикла потеряло смысл (например, нашли нужный элемент).
+                    </p>
+
+                    <div class="editor-block static" style="position: relative; left: -15px;">
+                        <textarea>// Прервать при достижении нуля
+Для Счётчик = -5 По 5 Цикл
+    Если Счётчик = 0 Тогда
+        Прервать;
+    КонецЕсли;
+    Результат = 1 / Счётчик;   // деление только для отрицательных и положительных до нуля
+    Сообщить(Результат);
+КонецЦикла;</textarea>
+                        <button class="copy-btn" title="Копировать">
+                            <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                        </button>
+                    </div>
+
+                    <h4 style="margin-left: 30px;">2. Продолжить</h4>
+                    <p style="margin-left: 80px;">
+                        Переходит к следующей итерации цикла, пропуская оставшийся код в текущей итерации. 
+                        Полезно, когда при определённых условиях не нужно выполнять все действия.
+                    </p>
+
+                    <div class="editor-block static" style="position: relative; left: -15px;">
+                        <textarea>// Вывести только нечётные числа от 1 до 10
+Для н = 1 По 10 Цикл
+    Если н % 2 = 0 Тогда   // если число чётное
+        Продолжить;        // пропускаем вывод
+    КонецЕсли;
+    Сообщить(н);           // выводятся только нечётные
+КонецЦикла;</textarea>
+                        <button class="copy-btn" title="Копировать">
+                            <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Вложенные циклы</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Внутри одного цикла может находиться другой. Это называется вложенными циклами. 
+                        Например, для обработки двумерного массива или таблицы (строки и колонки). 
+                        Внутренний цикл полностью выполняется на каждой итерации внешнего.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>
+// Рисуем равнобедренный треугольник высотой 5 строк
+Высота = 5;
+
+Для i = 1 По Высота Цикл
+    Строка = "";
+
+    // Добавляем пробелы перед звёздочками (чтобы центрировать)
+    Для k = 1 По (Высота - i) Цикл
+        Строка = Строка + "  ";  // Два пробела для симметрии
+    КонецЦикла;
+
+    // Добавляем звёздочки (количество нечётное: 1, 3, 5...)
+    Для j = 1 По (2 * i - 1) Цикл
+        Строка = Строка + "* ";
+    КонецЦикла;
+
+    Сообщить(Строка);
+КонецЦикла;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <div class="screenshot-demo">
+                <button class="toggle-screenshot">Показать результат</button>
+                <div class="screenshot-content">
+                    <img src="../img/Nested_loops.png" alt="Результат в 1С">
+                    <p>Результат выполнения</p>
+                </div>
+            </div>
+
+            <h3>Сравнение видов циклов</h3>
+
+            <div class="transparent-table cm-s-monokai">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Вид цикла</th>
+                            <th>Когда использовать</th>
+                            <th>Преимущества</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code class="inline-code"><span class="cm-keyword-purple">Для</span> ... <span class="cm-keyword-purple">По</span> ... <span class="cm-keyword-purple">Цикл</span></code></td>
+                            <td>Известно точное количество итераций, нужен счётчик.</td>
+                            <td>Простой, понятный, автоматическое изменение счётчика.</td>
+                        </tr>
+                        <tr>
+                            <td><code class="inline-code"><span class="cm-keyword-purple">Для каждого</span> ... <span class="cm-keyword-purple">Из</span> ... <span class="cm-keyword-purple">Цикл</span></code></td>
+                            <td>Нужно перебрать все элементы коллекции (массив, таблица, соответствие).</td>
+                            <td>Не нужно заботиться об индексах, код читается как естественный язык.</td>
+                        </tr>
+                        <tr>
+                            <td><code class="inline-code"><span class="cm-keyword-purple">Пока</span> ... <span class="cm-keyword-purple">Цикл</span></code></td>
+                            <td>Количество итераций неизвестно, зависит от условия (поиск, ввод данных).</td>
+                            <td>Гибкость – можно остановить в любой момент.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../../js/app.js"></script>
+</body>
+</html>

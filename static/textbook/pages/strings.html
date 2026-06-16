@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>1C Rush — Типы данных > Строки</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    
+    <style>
+        /* Стили для изоляции шапки от стилей теории */
+        body {
+            background: #0B0B0F !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        /* Шапка и всё внутри — сброс стилей теории */
+        .header,
+        .header * {
+            all: revert !important;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .header {
+            background: rgba(11, 11, 15, 0.9) !important;
+            backdrop-filter: blur(8px) !important;
+            border-bottom: 1px solid #23232C !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+        }
+        .header-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            height: 70px !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 24px !important;
+        }
+        .logo-text {
+            font-size: 1.8rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            background: linear-gradient(135deg, #FFFFFF, #98C3F8) !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            color: transparent !important;
+        }
+        .nav {
+            display: flex !important;
+            gap: 28px !important;
+        }
+        .nav-link {
+            color: #A1A1B0 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: 0.2s !important;
+            font-size: 0.95rem !important;
+            background: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: #98C3F8 !important;
+        }
+        .auth-area {
+            background: #1A1A24 !important;
+            padding: 6px 14px !important;
+            border-radius: 40px !important;
+            font-size: 0.85rem !important;
+            border: 1px solid #2E2E3A !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: auto !important;
+            min-width: auto !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+        }
+        .auth-area a {
+            color: #98C3F8 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            background: none !important;
+            border-radius: 0 !important;
+        }
+        .auth-area button {
+            background: none !important;
+            border: none !important;
+            color: #F87171 !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+        /* Сдвигаем боковую панель и основной контент вниз, чтобы не перекрывались шапкой */
+        .sidebar {
+            position: fixed !important;
+            top: 70px !important;
+            left: 0 !important;
+            height: calc(100vh - 70px) !important;
+            overflow-y: auto !important;
+        }
+        .main-content {
+            margin-left: 280px !important;
+            padding-top: 90px !important;
+        }
+        
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+        .user-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+        }
+        .user-badge {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }
+        .user-name {
+            font-weight: 500 !important;
+            color: #E2E2E8 !important;
+        }
+        .logout-btn {
+            background: none !important;
+            border: 1px solid #F87171 !important;
+            color: #F87171 !important;
+            padding: 4px 12px !important;
+            border-radius: 20px !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+        }
+        .logout-btn:hover {
+            background: #F87171 !important;
+            color: white !important;
+        }
+    </style>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+    <!-- ===== ШАПКА ===== -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../../index.html" style="text-decoration: none;">
+                    <span class="logo-text">1C Rush</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="../../index.html" class="nav-link">Главная</a>
+                <a href="../../practical-tasks/practical.html" class="nav-link">Тренажёр</a>
+                <a href="conditions.html" class="nav-link active">Справочник</a>
+                <a href="../../profile.html" class="nav-link">Профиль</a>
+            </nav>
+            <div class="auth-area" id="authArea"></div>
+        </div>
+    </header>
+
+    <!-- ========== БОКОВАЯ ПАНЕЛЬ ========== -->
+    <nav class="sidebar">
+        <a href="variables.html">Переменные</a>
+
+        <div class="dropdown-toggle">
+            <span>Типы данных</span>
+            <span class="arrow">▸</span>
+        </div>
+        <div class="submenu">
+            <a href="strings.html">Строки</a>
+            <a href="numbers.html">Числа</a>
+            <a href="dates.html">Дата</a>
+            <a href="booleans.html">Булево</a>
+        </div>
+
+        <a href="type-conversion.html">Преобразование типов</a>
+        <a href="conditions.html">Условные операторы</a>
+        <a href="loops.html">Циклы</a>
+        <a href="functions-procedure.html">Процедуры и функции</a>
+        <a href="array.html">Массивы</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="guide-container">
+
+            <h1>1C Rush > Типы данных > Строки</h1> 
+
+            <h3>Что такое строковый тип данных?</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        В языке 1С:Предприятие <strong><a href="https://ru.ruwiki.ru/wiki/Строковый_тип" target="_blank" class="wiki-link">строка</a></strong> – это тип переменной, предназначенный для хранения текстовой информации. 
+                        Любые символы: буквы (русские, английские), цифры, знаки препинания, пробелы – всё это может быть частью строки.
+                    </p>
+                    <br>
+                    <p>
+                        Представьте, что вы заполняете анкету: имя, фамилия, адрес, название товара, комментарий. 
+                        В программировании для каждого такого поля используется строковая переменная. 
+                        Платформа 1С обрабатывает строки довольно гибко – вы можете соединять их, вырезать части, искать нужные слова, менять регистр, удалять лишние пробелы.
+                    </p>
+                </div>         
+            </div>
+
+            <h3>Создание строковых переменных</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Для работы со строками переменные создаются по общим правилам — посредством явного или неявного объявления, при этом само строковое значение всегда заключается в двойные кавычки.
+                    </p>
+                </div>         
+            </div>
+
+            <div class="editor-block static">
+                <textarea>Перем ТекстСообщения;               // Переменная создана (явного объявления)
+ТекстСообщения = "Заказ принят";    // Присвоили значение к переменной ТекстСообщения
+ФамилияКлиента = "Иванов";          // Переменная создана (неявного объявления)</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Многострочные строки</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Обычная строка заканчивается там, где закрываются кавычки. 
+                        Но часто нужно записать текст с переносами строк – например, длинное письмо или отчёт. 
+                        В 1С для этого используется символ вертикальной черты <span class="cm-operator">|</span> в начале каждой строки (кроме первой). 
+                        Сам перевод строки в текст не вставляется, но визуально код выглядит аккуратно.
+                    </p>
+                </div>         
+            </div>
+
+            <div class="editor-block static">
+                <textarea>ТекстОтчёта = "Отчёт по продажам за месяц:
+|
+| Товар: Клавиатура
+| Цена Товара: 2000 руб.
+| Количество: 150 шт.
+|________________________ 
+|
+| Итого: 300 000 руб.";</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <div class="screenshot-demo">
+                <button class="toggle-screenshot">Показать результат</button>
+                <div class="screenshot-content">
+                    <img src="../img/StringMulti_line.png" alt="Результат в 1С">
+                    <p>Результат выполнения</p>
+                </div>
+            </div>
+
+            <h3>Сложение строк (конкатенация)</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Объединить две или более строк в одну можно с помощью оператора <span class="cm-operator">+</span>. 
+                        Это очень часто используется для формирования сообщений, составления полного имени, построения SQL-запросов и т.д.
+                    </p>
+                </div>         
+            </div>
+
+            <div class="editor-block static">
+                <textarea>Имя = "Иван";
+Фамилия = "Иванов";
+Приветствие = "Здравствуйте, " + Имя + " " + Фамилия + "!";
+// Переменная (Приветствие) содержит строку: Здравствуйте, Иван Иванов!</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Кавычки внутри строки</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Если текст внутри строкового литерала содержит двойные кавычки, их необходимо удвоить <span class="cm-string-double">""</span>. 
+                        В таком случае компилятор воспримет их как один символ кавычки в составе строки, а не как маркер окончания строкового литерала.
+                        Дело в том, что если написать Роман "Война и мир", то компилятор решит, что строка закончилась после слова <span class="cm-string-double">"Роман"</span>.
+                        Правильным решение будет удвоить кавычки.
+                    </p>
+                </div>         
+            </div>
+
+            <div class="editor-block static">
+                <textarea>Организация = "АО ""СБЕРБАНК ЛИЗИНГ""";       // Результат: АО "СБЕРБАНК ЛИЗИНГ"</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Основные действия со строками</h3>
+
+            <div class="transparent-table cm-s-monokai">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Операция</th>
+                            <th>Вызов</th>
+                            <th>Выходной результат</th>                    
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Сложить строки</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-string-double">"A"</span>
+                                    <span class="cm-operator">+</span>
+                                    <span class="cm-string-double">"B"</span>
+                                </code>  
+                            </td>
+                            <td><span class="cm-string-double">"AB"</span></td>
+                        </tr>
+                        <tr>
+                            <td>Длина строки</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-variable">СтрДлина</span><span class="cm-operator">(</span><span class="cm-string-double">"Строка"</span><span class="cm-operator">)</span> 
+                                </code>  
+                            </td>
+                            <td><span class="cm-number">6</span></td>
+                        </tr>
+                        <tr>
+                            <td>Удалить пробелы по краям</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-variable">СокрЛП</span><span class="cm-operator">(</span><span class="cm-string-double">" Строка  "</span><span class="cm-operator">)</span> 
+                                </code>  
+                            </td>
+                            <td><span class="cm-string-double">"Строка"</span></td>
+                        </tr>
+                        <tr>
+                            <td>Верхний регистр</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-variable">ВРег</span><span class="cm-operator">(</span><span class="cm-string-double">"иванов"</span><span class="cm-operator">)</span> 
+                                </code>  
+                            </td>
+                            <td><span class="cm-string-double">"ИВАНОВ"</span></td>
+                        </tr>
+                        <tr>
+                            <td>Нижний регистр</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-variable">НРег</span><span class="cm-operator">(</span><span class="cm-string-double">"ИВАНОВ"</span><span class="cm-operator">)</span> 
+                                </code>  
+                            </td>
+                            <td><span class="cm-string-double">"иванов"</span></td>
+                        </tr>
+                        <tr>
+                            <td>Титульный регистр</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-variable">ТРег</span><span class="cm-operator">(</span><span class="cm-string-double">"иван петров"</span><span class="cm-operator">)</span> 
+                                </code>  
+                            </td>
+                            <td><span class="cm-string-double">"Иван Петров"</span></td>
+                        </tr>
+                        <tr>
+                            <td>Первые N символов</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-variable">Лев</span><span class="cm-operator">(</span><span class="cm-string-double">"1С:Предприятие"</span><span class="cm-operator">,</span> <span class="cm-number">2</span><span class="cm-operator">)</span>
+                                </code>  
+                            </td>
+                            <td><span class="cm-string-double">"1С"</span></td>
+                        </tr>
+                        <tr>
+                            <td>Последние N символов</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-variable">Прав</span><span class="cm-operator">(</span><span class="cm-string-double">"1С:Предприятие"</span><span class="cm-operator">,</span> <span class="cm-number">7</span><span class="cm-operator">)</span>
+                                </code>  
+                            </td>
+                            <td><span class="cm-string-double">"приятие"</span></td>
+                        </tr>
+                        <tr>
+                            <td>Часть строки с позиции</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-variable">Сред</span><span class="cm-operator">(</span><span class="cm-string-double">"1234567"</span><span class="cm-operator">,</span> <span class="cm-number">3</span><span class="cm-operator">,</span> <span class="cm-number">2</span><span class="cm-operator">)</span>
+                                </code>  
+                            </td>
+                            <td><span class="cm-string-double">"34"</span></td>
+                        </tr>
+                        <tr>
+                            <td>Поиск позиции подстроки</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-variable">СтрНайти</span><span class="cm-operator">(</span><span class="cm-string-double">"Иван Петров"</span><span class="cm-operator">,</span> <span class="cm-string-double">" "</span><span class="cm-operator">)</span>
+                                </code>  
+                            </td>
+                            <td><span class="cm-number">5</span></td>
+                        </tr>
+                        <tr>
+                            <td>Замена подстроки</td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-variable">СтрЗаменить</span><span class="cm-operator">(</span><span class="cm-string-double">"1.5"</span><span class="cm-operator">,</span> <span class="cm-string-double">"."</span><span class="cm-operator">,</span> <span class="cm-string-double">","</span><span class="cm-operator">)</span>
+                                </code>  
+                            </td>
+                            <td><span class="cm-string-double">"1,5"</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../../js/app.js"></script>
+</body>
+</html>

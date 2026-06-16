@@ -1,0 +1,285 @@
+/* ========== БАЗОВЫЕ СТИЛИ ========== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #0B0B0F;    /*191919*/                        
+    font-family: Consolas, monospace;
+    padding: 30px 20px;
+}
+
+.container {
+    max-width: 1300px;
+    margin: 0 auto;
+    background: #1F1F1F; 
+    border-radius: 24px;
+    padding: 25px;
+    border: 1px solid #333;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+h1 {
+    color: #98C3F8;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    text-align:left;               
+    padding-left: 35px;                  
+}
+
+/* Новый стиль для заголовка задания */
+h2#taskTitle {
+    color: #98C3F8;
+    font-size: 1.2rem;
+    font-weight: normal;
+    text-align: center;                
+    margin: 0 0 20px 0;               
+    padding-left: 0;
+    border-left: none;                
+}
+
+/* ---------- РЕДАКТОР (как в IDE) ---------- */
+.editor-wrapper {
+    border-radius: 7px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.CodeMirror {
+    height: 400px;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    background: #1B1B1C !important;                         
+}
+
+.CodeMirror-scroll {
+    padding: 12px 0;
+}
+
+/* ---------- ПОДСВЕТКА 1С ---------- */
+.cm-s-monokai .cm-keyword-purple { color: #FF72D1; }
+.cm-s-monokai .cm-keyword-blue   { color: #98C3F8; }
+.cm-s-monokai .cm-operator       { color: #F8D100; }
+.cm-s-monokai .cm-number         { color: #98C379 !important; }
+.cm-s-monokai .cm-string-double  { color: #EF8931; }
+.cm-s-monokai .cm-string-single  { color: #49D289; }
+.cm-s-monokai .cm-comment        { color: #7AAF61 !important; }
+.cm-s-monokai .cm-variable,
+.cm-s-monokai .cm-variable-2,
+.cm-s-monokai .cm-variable-3,
+.cm-s-monokai .cm-def,
+.cm-s-monokai .cm-property                      { color: #98C3F8; }
+.cm-s-monokai .cm-atom                          { color: #49D289; }
+.cm-s-monokai .CodeMirror-activeline-background { background: #2a2a3a; }
+.cm-s-monokai .CodeMirror-selected              { background: #455677; }
+.cm-s-monokai .CodeMirror-gutters {
+    background: #1B1B1C;                                        
+    border-right: 10px solid #1B1B1C;                         
+}
+.cm-s-monokai .CodeMirror-linenumber { color: #858585; }
+
+.cm-s-monokai span:not(.cm-keyword-purple):not(.cm-keyword-blue):not(.cm-number):not(.cm-string-double):not(.cm-string-single):not(.cm-comment):not(.cm-operator):not(.cm-atom) {
+    color: #98C3F8;
+}
+
+/* ---------- КНОПКИ ---------- */
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+button {
+    background: #2c2c3a;
+    border: none;
+    color: #f0f0f0;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    padding: 8px 18px;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #48485a;
+    color: #1F1F1F;
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Кнопка копирования в подсказке */
+.hint-copy-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13.5px;
+    font-weight: 400;
+    color: #c2c2c2;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: 0.2s;
+}
+
+.hint-copy-btn:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.hint-copy-btn img {
+    width: 17px;
+    height: 17px;
+}
+
+/* ---------- БЛОК РЕЗУЛЬТАТА ---------- */
+.result-box {
+    background: #2a2a2f;
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-top: 20px;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    color: #ddd;
+    transition: background-color 0.15s;   /* плавность для мигания */
+}
+
+/* Жёлтый фон для информационного сообщения */
+.result-info {
+    background: #3a3a2a;
+    color: #f0e68c;                 /*f0e68c*/
+}
+
+/* Красный фон для ошибки */
+.result-error {
+    background: #2a2020;
+    color: #ffaaaa;
+}
+
+/* Ярко-красный фон для мигания (повторная ошибка) */
+.result-error-blink {
+    background: #352828 !important;   /* яркий красный*/
+    color: #ffaaaa !important;       /*текст*/
+}
+
+/* Зелёный фон для успеха */
+.result-success {
+    background: #1e2a1e;
+    color: #aaffaa;
+}
+
+/*Анимация мигания реализована через toggle в JS*/
+
+/* ---------- ПОДСКАЗКА ---------- */
+.hint-full {
+    background: #252525;
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-top: 20px;
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    border: 1px solid #444;
+    max-height: 1000px;
+    overflow: auto;
+}
+
+#staticHintEditor .CodeMirror-scroll {
+    padding-bottom: 64px;
+}
+
+.hint-title {
+    color: #1caa40;
+    font-weight: bold;
+    padding: 4px 15px;
+    font-size: 14px;
+    margin-bottom: 7px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ---------- ПРОГРЕСС ---------- */
+.progress {
+    color: #aaa;
+    font-size: 0.85rem;
+    margin: 10px 0 5px 5px;
+}
+
+/* ========== ВЕРХНЯЯ ПАНЕЛЬ (только добавлено, не трогает остальное) ========== */
+.top-bar {
+    margin: -30px -20px 20px -20px;
+    padding: 0 20px;
+    background: rgba(11, 11, 15, 0.9);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #23232C;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-family: 'Inter', sans-serif;
+}
+.top-bar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.logo-text {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #FFFFFF, #98C3F8);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+.top-nav {
+    display: flex;
+    gap: 28px;
+}
+.top-nav-link {
+    color: #A1A1B0;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.2s;
+    font-size: 0.95rem;
+}
+.top-nav-link:hover,
+.top-nav-link.active {
+    color: #98C3F8;
+}
+.top-auth-area {
+    background: #1A1A24;
+    padding: 6px 14px;
+    border-radius: 40px;
+    font-size: 0.85rem;
+    border: 1px solid #2E2E3A;
+    color: #A1A1B0;
+}
+
+.top-bar, .top-auth-area {
+    display: none;
+}
+
+.container {
+    max-width: 1300px;
+    margin: 0 auto;
+    background: #1F1F1F;
+    border-radius: 24px;
+    padding: 25px;
+    border: 1px solid #333;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+}

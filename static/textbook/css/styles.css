@@ -1,0 +1,401 @@
+/* ========== ОСНОВНЫЕ СТИЛИ 1C RUSH ========== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #191919;  /*0B0B0F*/
+    font-family: Consolas, monospace;
+    padding: 30px 20px;
+}
+
+.guide-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    background: #1F1F1F;
+    border-radius: 24px;
+    padding: 25px;
+    border: 1px solid #333;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+h1 {
+    color: #98C3F8;
+    font-size: 1.8rem;
+    margin-bottom: 40px;
+    padding-left: 35px;
+}
+
+h3 {
+    color: #f3f3f3;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    padding-left: 20px;
+}
+
+h4 {
+    color: #f3f3f3;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    padding-left: 20px;
+}
+
+.subtitle {
+    color: #aaa;
+    margin-bottom: 30px;
+    padding-left: 22px;
+}
+
+/* Блоки кода */
+.editor-block {
+    position: relative;
+    background: #1F1F1F;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 80%;
+    max-width: 900px;
+    margin: 30px auto;
+}
+
+/* Верхняя панель */
+.code-header {
+    background: #2C2C2E;
+    color: #c2c2c2;
+    padding: 8px 25px;
+    font-family: Consolas, monospace;
+    font-size: 13.5px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 41px;
+}
+
+/* CodeMirror */
+.CodeMirror {
+    height: auto !important;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    background: #1B1B1C;
+    border-radius: 6px;
+}
+.CodeMirror-scroll {
+    padding: 12px 0;
+    height: auto !important;
+}
+
+.editor-block.static .CodeMirror-scroll {
+    padding-bottom: 64px;
+}
+.editor-block.animated .CodeMirror-scroll {
+    padding-bottom: 60px;
+    min-height: 100px;
+}
+.editor-block.animated .CodeMirror {
+    min-height: 100px;
+}
+
+/* Палитра 1С */
+.cm-s-monokai .cm-keyword-purple        { color: #FF72D1; }
+.cm-s-monokai .cm-keyword-blue          { color: #98C3F8; }
+.cm-s-monokai .cm-operator              { color: #F8D100; }
+.cm-s-monokai .cm-number                { color: #98C379 !important; }
+.cm-s-monokai .cm-string-double         { color: #EF8931; }
+.cm-s-monokai .cm-string-single         { color: #49D289; }
+.cm-s-monokai .cm-comment               { color: #7AAF61 !important; }
+.cm-s-monokai .cm-variable,
+.cm-s-monokai .cm-variable-2,
+.cm-s-monokai .cm-variable-3,
+.cm-s-monokai .cm-def,
+.cm-s-monokai .cm-property                          { color: #98C3F8; }
+.cm-s-monokai .cm-atom                              { color: #49D289; }
+.cm-s-monokai .CodeMirror-activeline-background     { background: #2a2a3a; }
+.cm-s-monokai .CodeMirror-selected                  { background: #455677; }
+.cm-s-monokai .CodeMirror-gutters {
+    background: #181a1b;
+    border-right: 10px solid #181a1b;
+}
+.cm-s-monokai .CodeMirror-linenumber { color: #858585; }
+.cm-s-monokai span:not(.cm-keyword-purple):not(.cm-keyword-blue):not(.cm-number):not(.cm-string-double):not(.cm-string-single):not(.cm-comment):not(.cm-operator):not(.cm-atom) {
+    color: #98C3F8;
+}
+
+.cm-s-monokai.CodeMirror {
+    background: #1B1B1C !important;
+}
+.cm-s-monokai .CodeMirror-gutters {
+    background: #1B1B1C !important;
+    border-right-color: #1B1B1C !important;
+}
+
+/* Кнопка копирования */
+.copy-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #c2c2c2;
+}
+.copy-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+.copy-btn img {
+    width: 17px;
+    height: 17px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 40px;
+}
+.exit-link {
+    color: #98C3F8;
+    text-decoration: none;
+    background: #2c2c3a;
+    padding: 6px 18px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    transition: 0.2s;
+    display: inline-block;
+}
+.exit-link:hover {
+    background: #3dac4c;
+    color: #1F1F1F;
+}
+
+.transparent-table {
+    margin: 30px auto;
+    font-family: 'Consolas', monospace;
+    font-size: 14px;
+    width: 100%;
+    max-width: 725px;
+}
+
+.transparent-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: transparent;
+}
+
+.transparent-table th,
+.transparent-table td {
+    padding: 12px 16px;
+    text-align: left;
+    color: #e0e0e0;
+    border-bottom: 1px solid #3a3a3c;
+    background: transparent;
+}
+
+.transparent-table th {
+    font-weight: 900;
+    font-size: 16px;
+    border-bottom-width: 2px;
+    border-bottom-color: #4a4a4e;
+}
+
+.transparent-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.wiki-link {
+    color: #75B6E7;
+    text-decoration: none;
+}
+
+.wiki-link:hover {
+    color: #278CDA;
+    text-decoration: underline;
+}
+
+.wiki-link:visited {
+    color: #AC7EDF;
+}
+
+.cm-s-monokai span[class^="cm-"] {
+    background: rgba(60, 60, 70, 0.6);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-family: 'Consolas', monospace;
+    font-size: 0.95em;
+    white-space: nowrap;
+}
+
+.CodeMirror span[class^="cm-"] {
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    font-size: inherit !important;
+    white-space: normal !important;
+}
+
+.inline-code {
+    display: inline-block;
+    background: #2d2d2d;
+    font-family: Consolas, monospace;
+    font-size: 0.9em;
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid #3a3a3c;
+}
+
+.inline-code span {
+    background: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.screenshot-demo {
+    text-align: center;
+    margin: 30px auto;
+    width: 80%;
+    max-width: 900px;
+}
+
+.toggle-screenshot {
+    background: #181a1b;
+    color: #c2c2c2;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.toggle-screenshot:hover {
+    background: #2a2a2a;
+    transform: scale(1.02);
+}
+
+.screenshot-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, margin 0.2s ease-out;
+    margin-top: 0;
+}
+
+.screenshot-content img {
+    display: block;
+    margin: 15px auto 8px;
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.screenshot-content p {
+    color: #aaa;
+    text-align: center;
+    font-size: 14px;
+    font-style: italic;
+    margin: 0 0 5px;
+}
+
+/* ===== БОКОВАЯ ПАНЕЛЬ ===== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background: #0B0B0F;  /*0B0B0F 1a1a1a*/
+    border-right: 1px solid #333;
+    overflow-y: auto;
+    padding: 25px 20px;
+    box-sizing: border-box;
+    font-family: Consolas, monospace;
+    z-index: 100;
+}
+
+.sidebar a {
+    display: block;
+    color: #98C3F8;
+    text-decoration: none;
+    padding: 6px 10px;
+    margin: 3px 0;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: background 0.15s;
+}
+
+.sidebar a:hover {
+    background: #2c2c3a;
+    color: #ffffff;
+}
+
+.sidebar .home-link {
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: #f0f0f0;
+}
+
+.sidebar .section-title {
+    color: #aaa;
+    font-weight: bold;
+    margin: 15px 0 5px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sidebar .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #98C3F8;
+    padding: 6px 10px;
+    margin: 3px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.95rem;
+}
+
+.sidebar .dropdown-toggle:hover {
+    background: #2c2c3a;
+}
+
+.sidebar .dropdown-toggle .arrow {
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+    display: inline-block;
+}
+
+.sidebar .dropdown-toggle.open .arrow {
+    transform: rotate(90deg);
+}
+
+.sidebar .submenu {
+    display: none;
+    margin-left: 15px;
+}
+
+.sidebar .submenu.open {
+    display: block;
+}
+
+.sidebar .submenu a {
+    font-size: 0.9rem;
+    color: #98C3F8; 
+}
+
+.sidebar .submenu a:hover {
+    color: #fff;
+}
+
+.main-content {
+    margin-left: 280px;
+    padding: 30px 20px;
+}

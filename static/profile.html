@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1C Rush — Профиль</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        /* Дополнительные стили для иконки загрузки */
+        .avatar-label img {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body data-page="profile">
+    <div class="wrapper">
+        <header class="header">
+            <div class="container header-container">
+                <div class="logo">
+                    <span class="logo-text">1C Rush</span>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Главная</a>
+                    <a href="../practical-tasks/practical.html" class="nav-link">Тренажёр</a>
+                    <a href="../textbook/pages/variables.html" class="nav-link">Справочник</a>
+                    <a href="profile.html" class="nav-link active">Профиль</a>
+                </nav>
+                <div class="auth-area" id="authArea"></div>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="container">
+                <div class="profile-header">
+                    <h1 class="profile-title">Личный кабинет</h1>
+                    <p class="profile-subtitle">Управляйте данными и отслеживайте прогресс</p>
+                </div>
+
+                <div class="profile-grid">
+                    <div class="card profile-info-card">
+                        <div class="card-content">
+                            <div class="avatar-placeholder">
+                                <img id="avatarImg" class="avatar-img" src="img/user.png" alt="Аватар">
+                                <label for="avatarUpload" class="avatar-label">
+                                    <img src="img/download.png" alt="Загрузить фото">
+                                </label>
+                                <input type="file" id="avatarUpload" accept="image/jpeg,image/png" style="display: none;">
+                            </div>
+                            <div class="user-details">
+                                <div class="info-row">
+                                    <span class="info-label">Email</span>
+                                    <span class="info-value" id="profileEmail">—</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Статус</span>
+                                    <span class="info-value" id="profileStatus">—</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">На сайте с</span>
+                                    <span class="info-value" id="profileSince">—</span>
+                                </div>
+                                <div class="info-row edit-name-row">
+                                    <span class="info-label">Отображаемое имя</span>
+                                    <div class="edit-name-group">
+                                        <input type="text" id="displayNameInput" class="name-input" placeholder="Ваше имя">
+                                        <button id="saveNameBtn" class="btn-small">Сохранить</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card stats-card">
+                        <div class="card-content">
+                            <h3 class="card-title-mini">Ваша статистика</h3>
+                            <div class="stats-list">
+                                <div class="stat-row">
+                                    <span class="stat-label-custom">Решено задач</span>
+                                    <span class="stat-value-custom" id="profileTasksSolved">0</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label-custom">Дней заходов</span>
+                                    <span class="stat-value-custom" id="profileDaysCount">0</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label-custom">Прогресс</span>
+                                    <div class="progress-bar-wrapper">
+                                        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                                    </div>
+                                    <span class="stat-value-custom" id="progressPercent">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-actions">
+                    <button id="logoutBtnProfile" class="card-btn logout-action">Выйти из аккаунта</button>
+                </div>
+
+                <div id="guestMessage" class="guest-message" style="display: none;">
+                    <p>Вы вошли как гость. <a href="/login.html">Войдите</a> или <a href="/register.html">зарегистрируйтесь</a>, чтобы сохранять прогресс и управлять профилем.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>© 2026 1C Rush — Платформа для разработчиков 1С</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

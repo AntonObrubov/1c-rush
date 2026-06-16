@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>1C Rush — Условные операторы</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    
+    <style>
+        /* Стили для изоляции шапки от стилей теории */
+        body {
+            background: #0B0B0F !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        /* Шапка и всё внутри — сброс стилей теории */
+        .header,
+        .header * {
+            all: revert !important;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .header {
+            background: rgba(11, 11, 15, 0.9) !important;
+            backdrop-filter: blur(8px) !important;
+            border-bottom: 1px solid #23232C !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+        }
+        .header-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            height: 70px !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 24px !important;
+        }
+        .logo-text {
+            font-size: 1.8rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            background: linear-gradient(135deg, #FFFFFF, #98C3F8) !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            color: transparent !important;
+        }
+        .nav {
+            display: flex !important;
+            gap: 28px !important;
+        }
+        .nav-link {
+            color: #A1A1B0 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: 0.2s !important;
+            font-size: 0.95rem !important;
+            background: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: #98C3F8 !important;
+        }
+        .auth-area {
+            background: #1A1A24 !important;
+            padding: 6px 14px !important;
+            border-radius: 40px !important;
+            font-size: 0.85rem !important;
+            border: 1px solid #2E2E3A !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: auto !important;
+            min-width: auto !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+        }
+        .auth-area a {
+            color: #98C3F8 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            background: none !important;
+            border-radius: 0 !important;
+        }
+        .auth-area button {
+            background: none !important;
+            border: none !important;
+            color: #F87171 !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+        /* Сдвигаем боковую панель и основной контент вниз, чтобы не перекрывались шапкой */
+        .sidebar {
+            position: fixed !important;
+            top: 70px !important;
+            left: 0 !important;
+            height: calc(100vh - 70px) !important;
+            overflow-y: auto !important;
+        }
+        .main-content {
+            margin-left: 280px !important;
+            padding-top: 90px !important;
+        }
+        
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+        .user-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+        }
+        .user-badge {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }
+        .user-name {
+            font-weight: 500 !important;
+            color: #E2E2E8 !important;
+        }
+        .logout-btn {
+            background: none !important;
+            border: 1px solid #F87171 !important;
+            color: #F87171 !important;
+            padding: 4px 12px !important;
+            border-radius: 20px !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+        }
+        .logout-btn:hover {
+            background: #F87171 !important;
+            color: white !important;
+        }
+    </style>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+    <!-- ===== ШАПКА ===== -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../../index.html" style="text-decoration: none;">
+                    <span class="logo-text">1C Rush</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="../../index.html" class="nav-link">Главная</a>
+                <a href="../../practical-tasks/practical.html" class="nav-link">Тренажёр</a>
+                <a href="conditions.html" class="nav-link active">Справочник</a>
+                <a href="../../profile.html" class="nav-link">Профиль</a>
+            </nav>
+            <div class="auth-area" id="authArea"></div>
+        </div>
+    </header>
+
+    <!-- ========== БОКОВАЯ ПАНЕЛЬ ========== -->
+    <nav class="sidebar">
+        <a href="variables.html">Переменные</a>
+
+        <div class="dropdown-toggle">
+            <span>Типы данных</span>
+            <span class="arrow">▸</span>
+        </div>
+        <div class="submenu">
+            <a href="strings.html">Строки</a>
+            <a href="numbers.html">Числа</a>
+            <a href="dates.html">Дата</a>
+            <a href="booleans.html">Булево</a>
+        </div>
+
+        <a href="type-conversion.html">Преобразование типов</a>
+        <a href="conditions.html">Условные операторы</a>
+        <a href="loops.html">Циклы</a>
+        <a href="functions-procedure.html">Процедуры и функции</a>
+        <a href="array.html">Массивы</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="guide-container">
+
+            <h1>1C Rush > Условные операторы</h1>
+
+            <h3>Что такое условный оператор?</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Условный оператор позволяет программе выбирать, какой блок кода выполнять, в зависимости от выполнения некоторого условия. 
+                        В реальной жизни мы постоянно используем логику «если – то»: «если идёт дождь, то взять зонт», «если сумма заказа больше 5000, то предоставить скидку». 
+                        В 1С:Предприятие эта логика реализуется конструкцией 
+                        <span class="cm-keyword-purple">Если</span>…<span class="cm-keyword-purple">Тогда</span>…<span class="cm-keyword-purple">КонецЕсли</span>, а также её расширенными вариантами.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Анимированный блок -->
+            <div class="editor-block animated"
+                 data-examples='[
+                    "Если 10 = 10 Тогда\n     Сообщить(\"Истина\");\nКонецЕсли;",
+                    "Если 1 <> 2 Тогда\n     Сообщить(\"Истина\");\nКонецЕсли;",
+                    "Если 10 > 5 Тогда\n     Сообщить(\"Истина\");\nКонецЕсли;",
+                    "Если 20 < 100 Тогда\n     Сообщить(\"Истина\");\nКонецЕсли;",
+                    "Если 100 >= 100 Тогда\n     Сообщить(\"Истина\");\nКонецЕсли;",
+                    "Если 1 <= 5 Тогда\n     Сообщить(\"Истина\");\nКонецЕсли;"
+                 ]'>
+                <textarea></textarea>
+            </div>
+
+            <h3>Операторы сравнения</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Условия строятся на основе операторов сравнения. Они сравнивают два значения и возвращают 
+                        <span class="cm-keyword-purple">Истина</span> или <span class="cm-keyword-purple">Ложь</span>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="transparent-table cm-s-monokai">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr><th>Описание</th><th>Реализация</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Оператор <code class="inline-code"><span class="cm-operator">=</span></code> проверяет равенство двух значений.</td><td><code class="inline-code"><span class="cm-number">5</span> <span class="cm-operator">=</span> <span class="cm-number">5</span> → <span class="cm-keyword-purple">Истина</span></code></td></tr>
+                        <tr><td>Оператор <code class="inline-code"><span class="cm-operator"><></span></code> проверяет, что значения не равны.</td><td><code class="inline-code"><span class="cm-number">5</span> <span class="cm-operator"><></span> <span class="cm-number">3</span>  → <span class="cm-keyword-purple">Истина</span></code></td></tr>
+                        <tr><td>Оператор <code class="inline-code"><span class="cm-operator">></span></code> проверяет, что левое значение больше правого.</td><td><code class="inline-code"><span class="cm-number">10</span> <span class="cm-operator">></span> <span class="cm-number">5</span>  → <span class="cm-keyword-purple">Истина</span></code></td></tr>
+                        <tr><td>Оператор <code class="inline-code"><span class="cm-operator"><</span></code> проверяет, что левое значение меньше правого.</td><td><code class="inline-code"><span class="cm-number">3</span> <span class="cm-operator"><</span> <span class="cm-number">7</span>  → <span class="cm-keyword-purple">Истина</span></code></td></tr>
+                        <tr><td>Оператор <code class="inline-code"><span class="cm-operator">>=</span></code> проверяет, что левое значение больше или равно правому.</td><td><code class="inline-code"><span class="cm-number">8</span> <span class="cm-operator">>=</span> <span class="cm-number">8</span>  → <span class="cm-keyword-purple">Истина</span></code></td></tr>
+                        <tr><td>Оператор <code class="inline-code"><span class="cm-operator"><=</span></code> проверяет, что левое значение меньше или равно правому.</td><td><code class="inline-code"><span class="cm-number">4</span> <span class="cm-operator"><=</span> <span class="cm-number">6</span>  → <span class="cm-keyword-purple">Истина</span></code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Конструкция</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Условный оператор <span class="cm-keyword-purple">Если</span>…<span class="cm-keyword-purple">Тогда</span>…<span class="cm-keyword-purple">КонецЕсли</span> предназначен для выполнения блока кода только при выполнении заданного условия. 
+                        Конструкция начинается с ключевого слова <span class="cm-keyword-purple">Если</span>, после которого записывается логическое выражение, возвращающее <span class="cm-keyword-purple">Истина</span> или <span class="cm-keyword-purple">Ложь</span>. 
+                        Затем обязательно ставится ключевое слово <span class="cm-keyword-purple">Тогда</span> — оно отделяет условие от тела оператора. 
+                        Сразу после <span class="cm-keyword-purple">Тогда</span> на новой строке или через пробел пишутся действия, которые должны произойти, если условие истинно. 
+                        Завершается оператор ключевым словом <span class="cm-keyword-purple">КонецЕсли</span>, которое указывает, что блок кода, относящийся к этому условию, закончился. 
+                        Точка с запятой <span class="cm-operator">;</span> после <span class="cm-keyword-purple">КонецЕсли</span> в языке 1С не является обязательной, но её можно поставить для единообразия стиля. 
+                        Если условие ложно, весь код между <span class="cm-keyword-purple">Тогда</span> и <span class="cm-keyword-purple">КонецЕсли</span> пропускается.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>Сумма = 1000;
+Лимит = 500;
+
+Если Сумма > Лимит Тогда
+    Сообщить("Превышен лимит!");
+КонецЕсли;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Блок Иначе</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        <span class="cm-keyword-purple">Иначе</span> — это часть условного оператора, которая задаёт альтернативный блок кода. Этот блок выполняется только в том случае, если условие после <span class="cm-keyword-purple">Если</span> оказалось ложным (то есть не выполнилось). 
+                        Таким образом, <span class="cm-keyword-purple">Иначе</span> позволяет программе выбрать одно из двух действий в зависимости от истинности условия.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>Цена = 1000;
+КоличествоДенег = 700;
+
+Если Цена <= КоличествоДенег Тогда
+    Сообщить("Вы успешно купили товар!");           // Этот блок кода пропускается
+Иначе
+    Сообщить("Недостаточно средств!");              // Этот блок кода выполнится
+КонецЕсли;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Множественные условия</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        <span class="cm-keyword-purple">ИначеЕсли</span> — это часть условного оператора, позволяющая проверить несколько условий последовательно. 
+                        Конструкция располагается между основным блоком <span class="cm-keyword-purple">Если</span> … <span class="cm-keyword-purple">Тогда</span> и завершающим <span class="cm-keyword-purple">КонецЕсли</span>. 
+                        Условия проверяются по порядку сверху вниз. Как только какое‑либо из них оказывается истинным, выполняется соответствующий этому условию блок кода, а все последующие проверки (включая блок <span class="cm-keyword-purple">Иначе</span>) пропускаются. 
+                        Если ни одно из условий не истинно, выполняется необязательный блок <span class="cm-keyword-purple">Иначе</span>. 
+                        Порядок следования условий важен: более частные или строгие условия следует размещать выше, иначе более общее условие сработает раньше и остальные ветки никогда не выполнятся.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>СуммаЗаказа = 75000;
+
+Если СуммаЗаказа >= 100000 Тогда
+    Скидка = 15;
+ИначеЕсли СуммаЗаказа >= 50000 Тогда            // Выполнится только это условие
+    Скидка = 10;
+ИначеЕсли СуммаЗаказа >= 10000 Тогда
+    Скидка = 5;
+Иначе
+    Скидка = 0;
+КонецЕсли;
+
+Сообщить("Ваша скидка: " + Скидка + "%");       // Ваша скидка: 10%</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Вложенные условия</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Вложенные условия — это когда внутри блока <span class="cm-keyword-purple">Тогда</span> или <span class="cm-keyword-purple">Иначе</span> размещается ещё один условный оператор <span class="cm-keyword-purple">Если</span> … <span class="cm-keyword-purple">Тогда</span> … <span class="cm-keyword-purple">КонецЕсли</span>. 
+                        Такая конструкция позволяет проверять дополнительные условия, но только если внешнее условие уже выполнилось (или не выполнилось). 
+                        Вкладывать друг в друга рекомендуется не более 2–3 уровней, иначе код становится запутанным и трудно читаемым. 
+                        Сложную логику лучше выносить в отдельные процедуры или функции. 
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>ТоварВНаличии = Истина;
+ДеньгиПокупателя = 1000;
+ЦенаТовара = 800;
+
+Если ТоварВНаличии Тогда
+    Если ДеньгиПокупателя >= ЦенаТовара Тогда
+        Сообщить("Вы купили товар!");                       // Выполниться этот вложенное условие
+    Иначе
+        Сообщить("Недостаточно средств для покупки!");      // Не выполниться (пропуск) 
+    КонецЕсли;
+Иначе
+    Сообщить("Товара нет на складе.");                      // Не выполниться (пропуск) 
+КонецЕсли;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Тернарный оператор</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Тернарный оператор — это сокращённый способ выбрать одно из двух значений в зависимости от условия.
+                        Записывается в виде
+                        <code class="inline-code">
+                            <span class="cm-operator">?</span>
+                            <span class="cm-operator">(</span><span class="cm-operator"><</span><span class="cm-variable">Условие</span><span class="cm-operator">></span>, <span class="cm-operator"><</span><span class="cm-variable">ЗначениеЕслиИстина</span><span class="cm-operator">></span>, <span class="cm-operator"><</span><span class="cm-variable">ЗначениеЕслиЛожь</span><span class="cm-operator">></span><span class="cm-operator">)</span><span class="cm-operator">;</span>
+                        </code>
+                        Он работает так: вычисляется условие, и если оно истинно, то результатом всего выражения становится 
+                        <code class="inline-code">
+                            <span class="cm-operator"><</span><span class="cm-variable">ЗначениеЕслиИстина</span><span class="cm-operator">></span>
+                        </code>,
+                        если ложно —  
+                        <code class="inline-code">
+                            <span class="cm-operator"><</span><span class="cm-variable">ЗначениеЕслиЛожь</span><span class="cm-operator">></span>
+                        </code>. 
+                        Тернарный оператор удобен для простых присваиваний, где не нужно использовать условный оператор <span class="cm-keyword-purple">Если</span>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>Сумма = 100;
+
+// Полная форма:
+Если Сумма > 0 Тогда
+    Сообщить("Положительное");
+Иначе
+    Сообщить("Отрицательное или ноль");
+КонецЕсли;
+
+// Тернарный оператор:
+Результат = ?(Сумма > 0, "Положительный", "Отрицательный или ноль");
+
+// Присваивание булева значения по условию
+СтатусБаланса = ?(Сумма > 0, Истина, Ложь);</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../../js/app.js"></script>
+</body>
+</html>

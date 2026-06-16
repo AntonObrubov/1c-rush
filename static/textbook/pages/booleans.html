@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>1C Rush — Условные операторы</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    
+    <style>
+        /* Стили для изоляции шапки от стилей теории */
+        body {
+            background: #0B0B0F !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        /* Шапка и всё внутри — сброс стилей теории */
+        .header,
+        .header * {
+            all: revert !important;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .header {
+            background: rgba(11, 11, 15, 0.9) !important;
+            backdrop-filter: blur(8px) !important;
+            border-bottom: 1px solid #23232C !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+        }
+        .header-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            height: 70px !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 24px !important;
+        }
+        .logo-text {
+            font-size: 1.8rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            background: linear-gradient(135deg, #FFFFFF, #98C3F8) !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            color: transparent !important;
+        }
+        .nav {
+            display: flex !important;
+            gap: 28px !important;
+        }
+        .nav-link {
+            color: #A1A1B0 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: 0.2s !important;
+            font-size: 0.95rem !important;
+            background: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: #98C3F8 !important;
+        }
+        .auth-area {
+            background: #1A1A24 !important;
+            padding: 6px 14px !important;
+            border-radius: 40px !important;
+            font-size: 0.85rem !important;
+            border: 1px solid #2E2E3A !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: auto !important;
+            min-width: auto !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+        }
+        .auth-area a {
+            color: #98C3F8 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            background: none !important;
+            border-radius: 0 !important;
+        }
+        .auth-area button {
+            background: none !important;
+            border: none !important;
+            color: #F87171 !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+        /* Сдвигаем боковую панель и основной контент вниз, чтобы не перекрывались шапкой */
+        .sidebar {
+            position: fixed !important;
+            top: 70px !important;
+            left: 0 !important;
+            height: calc(100vh - 70px) !important;
+            overflow-y: auto !important;
+        }
+        .main-content {
+            margin-left: 280px !important;
+            padding-top: 90px !important;
+        }
+        
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+        .user-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+        }
+        .user-badge {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }
+        .user-name {
+            font-weight: 500 !important;
+            color: #E2E2E8 !important;
+        }
+        .logout-btn {
+            background: none !important;
+            border: 1px solid #F87171 !important;
+            color: #F87171 !important;
+            padding: 4px 12px !important;
+            border-radius: 20px !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+        }
+        .logout-btn:hover {
+            background: #F87171 !important;
+            color: white !important;
+        }
+    </style>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+    <!-- ===== ШАПКА ===== -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../../index.html" style="text-decoration: none;">
+                    <span class="logo-text">1C Rush</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="../../index.html" class="nav-link">Главная</a>
+                <a href="../../practical-tasks/practical.html" class="nav-link">Тренажёр</a>
+                <a href="conditions.html" class="nav-link active">Справочник</a>
+                <a href="../../profile.html" class="nav-link">Профиль</a>
+            </nav>
+            <div class="auth-area" id="authArea"></div>
+        </div>
+    </header>
+
+    <!-- ========== БОКОВАЯ ПАНЕЛЬ ========== -->
+    <nav class="sidebar">
+        <a href="variables.html">Переменные</a>
+
+        <div class="dropdown-toggle">
+            <span>Типы данных</span>
+            <span class="arrow">▸</span>
+        </div>
+        <div class="submenu">
+            <a href="strings.html">Строки</a>
+            <a href="numbers.html">Числа</a>
+            <a href="dates.html">Дата</a>
+            <a href="booleans.html">Булево</a>
+        </div>
+
+        <a href="type-conversion.html">Преобразование типов</a>
+        <a href="conditions.html">Условные операторы</a>
+        <a href="loops.html">Циклы</a>
+        <a href="functions-procedure.html">Процедуры и функции</a>
+        <a href="array.html">Массивы</a>
+    </nav>
+
+        <div class="main-content">
+        <div class="guide-container">
+
+            <h1>1C Rush > Типы данных > Булево</h1>
+
+            <h3>Что такое булев тип данных?</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        <strong><a href="https://ru.ruwiki.ru/wiki/Логический_тип" target="_blank" class="wiki-link">Булево</a></strong> (логический тип) — это тип данных, который может принимать только два значения: 
+                        <span class="cm-keyword-purple">Истина</span> или <span class="cm-keyword-purple">Ложь</span>. 
+                        В 1С:Предприятие этот тип используется во всех условных конструкциях 
+                        (<span class="cm-keyword-purple">Если</span>…<span class="cm-keyword-purple">Тогда</span>), в операциях сравнения, 
+                        а также для хранения флагов и состояний объектов. В отличие от некоторых языков, в 1С булевы значения <strong>не могут быть «неопределены»</strong> — 
+                        любое логическое выражение всегда даёт либо <span class="cm-keyword-purple">Истина</span>, либо <span class="cm-keyword-purple">Ложь</span>. 
+                        Это важно для надёжности проверок.
+                    </p>
+                </div>
+            </div>
+
+            <h3>Создание булевых переменных</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Переменные типа «Булево» создаются так же, как и любые другие — через явное объявление 
+                        <span class="cm-keyword-purple">Перем</span> или неявно, при первом присваивании. 
+                        Значения <span class="cm-keyword-purple">Истина</span> и <span class="cm-keyword-purple">Ложь</span> являются литералами языка и пишутся с заглавной буквы.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static">
+                <textarea>// Прямое присваивание
+ФлагАктивен = Истина;
+Отмена = Ложь;
+
+// Явное объявление
+Перем Разрешено Булево;
+Разрешено = Истина;
+
+// Результат сравнения
+Число = 10;
+Сравнение = (Число > 5);   // Истина</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Логические операции</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        С булевыми значениями выполняют три основные логические операции: конъюнкцию <span class="cm-keyword-purple">И</span>, дизъюнкцию <span class="cm-keyword-purple">ИЛИ</span>  и отрицание <span class="cm-keyword-purple">НЕ</span>. 
+                        Конъюнкция истинна только когда оба операнда истинны, а дизъюнкция — когда истинен хотя бы один из них. 
+                        Правила этих операций удобно представлять с помощью <a href="https://ru.ruwiki.ru/wiki/Построение_таблиц_истинности_логических_выражений" target="_blank" class="wiki-link">таблиц истинности</a>.
+                    </p>
+                </div>
+            </div>
+
+            <h4 style="margin-left: 110px;">1. Конъюнкция</h4>
+
+            <div class="transparent-table cm-s-monokai">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Описание</th>
+                            <th>Сравнение</th>
+                            <th>Вывод</th>                 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Оба значения принимают <span class="cm-keyword-purple">Истина</span></td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-keyword-purple">Истина</span>
+                                    <span class="cm-keyword-purple">И</span>
+                                    <span class="cm-keyword-purple">Истина</span>
+                                </code>
+                            </td>
+                            <td><span class="cm-keyword-purple">Истина</span></td>
+                        </tr>
+                        <tr>
+                            <td>Одно значение принимает <span class="cm-keyword-purple">Истина</span>, другое <span class="cm-keyword-purple">Ложь</span></td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-keyword-purple">Ложь</span>
+                                    <span class="cm-keyword-purple">И</span>
+                                    <span class="cm-keyword-purple">Истина</span>
+                                </code>
+                            </td>
+                            <td><span class="cm-keyword-purple">Ложь</span></td>
+                        </tr>
+                        <tr>
+                            <td>Одно значение принимает <span class="cm-keyword-purple">Ложь</span>, другое <span class="cm-keyword-purple">Истина</span></td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-keyword-purple">Истина</span>
+                                    <span class="cm-keyword-purple">И</span>
+                                    <span class="cm-keyword-purple">Ложь</span>
+                                </code>
+                            </td>
+                            <td><span class="cm-keyword-purple">Ложь</span></td>
+                        </tr>
+                        <tr>
+                            <td>Оба значения принимают <span class="cm-keyword-purple">Ложь</span></td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-keyword-purple">Ложь</span>
+                                    <span class="cm-keyword-purple">И</span>
+                                    <span class="cm-keyword-purple">Ложь</span>
+                                </code>
+                            </td>
+                            <td><span class="cm-keyword-purple">Ложь</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4 style="margin-left: 110px;">2. Дизъюнкция</h4>
+
+            <div class="transparent-table cm-s-monokai">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Описание</th>
+                            <th>Сравнение</th>
+                            <th>Вывод</th>                 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Оба значения принимают <span class="cm-keyword-purple">Истина</span></td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-keyword-purple">Истина</span>
+                                    <span class="cm-keyword-purple">Или</span>
+                                    <span class="cm-keyword-purple">Истина</span>
+                                </code>
+                            </td>
+                            <td><span class="cm-keyword-purple">Истина</span></td>
+                        </tr>
+                        <tr>
+                            <td>Одно значение принимает <span class="cm-keyword-purple">Истина</span>, другое <span class="cm-keyword-purple">Ложь</span></td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-keyword-purple">Ложь</span>
+                                    <span class="cm-keyword-purple">Или</span>
+                                    <span class="cm-keyword-purple">Истина</span>
+                                </code>
+                            </td>
+                            <td><span class="cm-keyword-purple">Истина</span></td>
+                        </tr>
+                        <tr>
+                            <td>Одно значение принимает <span class="cm-keyword-purple">Ложь</span>, другое <span class="cm-keyword-purple">Истина</span></td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-keyword-purple">Истина</span>
+                                    <span class="cm-keyword-purple">Или</span>
+                                    <span class="cm-keyword-purple">Ложь</span>
+                                </code>
+                            </td>
+                            <td><span class="cm-keyword-purple">Истина</span></td>
+                        </tr>
+                        <tr>
+                            <td>Оба значения принимают <span class="cm-keyword-purple">Ложь</span></td>
+                            <td>
+                                <code class="inline-code">
+                                    <span class="cm-keyword-purple">Ложь</span>
+                                    <span class="cm-keyword-purple">Или</span>
+                                    <span class="cm-keyword-purple">Ложь</span>
+                                </code>
+                            </td>
+                            <td><span class="cm-keyword-purple">Ложь</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h4 style="margin-left: 110px;">3. Отрицание</h4>
+
+            <div class="transparent-table cm-s-monokai">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Описание</th>
+                            <th>Добавляем операцию <span class="cm-keyword-purple">НЕ</span></th>
+                            <th>Вывод</th>                 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Входное значение <span class="cm-keyword-purple">Истина</span></td>
+                            <td>
+                                Добавляем значение
+                                <code class="inline-code">
+                                    <span class="cm-keyword-purple">Не</span>
+                                    <span class="cm-keyword-purple">Истина</span>
+                                </code>
+                            </td>
+                            <td><span class="cm-keyword-purple">Ложь</span></td>
+                        </tr>
+                        <tr>
+                            <td>Входное значение <span class="cm-keyword-purple">Ложь</span></td>
+                            <td>
+                                Добавляем значение
+                                <code class="inline-code">
+                                    <span class="cm-keyword-purple">Не</span>
+                                    <span class="cm-keyword-purple">Ложь</span>
+                                </code>
+                            </td>
+                            <td><span class="cm-keyword-purple">Истина</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Приоритет операций</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        При вычислении логических выражений самый высокий приоритет имеют 
+                        круглые скобки <span class="cm-operator">()</span>, затем выполняется операция <span class="cm-keyword-purple">НЕ</span>, 
+                        потом операция <span class="cm-keyword-purple">И</span>, 
+                        а самым низким приоритетом обладает операция <span class="cm-keyword-purple">ИЛИ</span>, 
+                        поэтому для явного управления порядком вычислений всегда следует использовать круглые скобки.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>А = Истина;
+Б = Ложь;
+
+Результат1 = А И Б;             // Истина И Ложь = Ложь
+Результат2 = А ИЛИ Б;           // Истина ИЛИ Ложь = Истина
+Результат3 = НЕ А;              // НЕ Истина = Ложь
+
+Сложное = А ИЛИ НЕ Б И А;       // Без скобок: сначала НЕ, потом И, потом ИЛИ
+
+// Порядок: НЕ Б = Истина, затем Истина И А = Истина, затем А ИЛИ Истина = Истина
+
+
+Сложное2 = (А ИЛИ НЕ Б) И А;    // Со скобками: меняем порядок
+
+// Сначала скобки: А ИЛИ НЕ Б = Истина ИЛИ Истина = Истина, затем Истина И А = Истина</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Использование в условных конструкциях</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Самое частое применение булевых значений — в операторе 
+                        <span class="cm-keyword-purple">Если</span>…<span class="cm-keyword-purple">Тогда</span>…<span class="cm-keyword-purple">Иначе</span>. 
+                        Условие может быть как простым сравнением, так и сложным логическим выражением.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative; left: -15px;">
+                <textarea>Сумма = 1000;
+Лимит = 500;
+ФлагПроверки = Истина;
+
+Если Сумма > Лимит И ФлагПроверки Тогда
+    Сообщить("Превышение лимита");
+Иначе
+    Сообщить("В пределах нормы");
+КонецЕсли;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../../js/app.js"></script>
+</body>
+</html>

@@ -1,142 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Sandbox</title>
+    <title>1C Rush — Главная</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 </head>
-<body>
+<body data-page="index">
+    <div class="wrapper">
+        <header class="header">
+            <div class="container header-container">
+                <div class="logo">
+                    <span class="logo-text">1C Rush</span>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link active">Главная</a>
+                    <a href="../practical-tasks/practical.html" class="nav-link">Тренажёр</a>
+                    <a href="../textbook/pages/variables.html" class="nav-link">Справочник</a>
+                    <a href="profile.html" class="nav-link">Профиль</a>
+                </nav>
+                <div class="auth-area" id="authArea"></div>
+            </div>
+        </header>
 
-    <h1>Backend API Sandbox</h1>
-    <p>This page is used for testing backend API endpoints.</p>
+        <main class="main">
+            <div class="container">
+                <div class="hero">
+                    <h1>1С Rush</h1>
+                    <p class="hero-sub">Практические занятия и справочник по языку 1С:Предприятие 8.3</p>
+                    <div id="greetingMessage" class="greeting-message"></div>
+                </div>
 
-    <hr>
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-content">
+                            <h2 class="card-title">Тренажёр задач</h2>
+                            <p class="card-desc">Интерактивные задания по встроенному языку 1С.</p>
+                            <a href="../practical-tasks/practical.html" class="card-btn">Открыть тренажёр →</a>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <h2 class="card-title">Справочник</h2>
+                            <p class="card-desc">Теория по языку программирования 1С:Предприятие 8.3</p>
+                            <a href="../textbook/pages/variables.html" class="card-btn">Перейти к справочнику →</a>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- REGISTER -->
-    <h3>Register</h3>
-    <p>POST /api/register</p>
-    <input type="email" id="register_email" placeholder="Email"><br><br>
-    <input type="password" id="register_password" placeholder="Password"><br><br>
-    <button onclick="registerUser()">Register</button>
-    <pre id="register_result"></pre>
+                <!-- Блок статистики (скрывается для гостя) -->
+                <div class="stats-block" id="statsBlock">
+                    <div class="stat-item">
+                        <span class="stat-value" id="daysCount">0</span>
+                        <span class="stat-label">дней заходов</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="tasksSolved">0</span>
+                        <span class="stat-label">задач решено</span>
+                    </div>
+                </div>
+            </div>
+        </main>
 
-    <hr>
+        <footer class="footer">
+            <div class="container">
+                <p>© 2026 1C Rush — Платформа для разработчиков 1С</p>
+            </div>
+        </footer>
+    </div>
 
-    <!-- LOGIN -->
-    <h3>Login</h3>
-    <p>POST /api/login</p>
-    <input type="email" id="login_email" placeholder="Email"><br><br>
-    <input type="password" id="login_password" placeholder="Password"><br><br>
-    <button onclick="loginUser()">Login</button>
-    <pre id="login_result"></pre>
-
-    <hr>
-
-    <!-- BUY TICKET -->
-    <h3>Buy Ticket</h3>
-    <p>POST /api/buy</p>
-    <input type="text" id="buy_user_id" placeholder="User ID"><br><br>
-    <input type="text" id="event_name" placeholder="Event Name"><br><br>
-    <button onclick="buyTicket()">Buy Ticket</button>
-    <pre id="buy_result"></pre>
-
-    <hr>
-
-    <!-- GET TICKETS -->
-    <h3>My Tickets</h3>
-    <p>GET /api/tickets?user_id=ID</p>
-    <input type="text" id="tickets_user_id" placeholder="User ID"><br><br>
-    <button onclick="getTickets()">Get Tickets</button>
-    <pre id="tickets_result"></pre>
-
-    <hr>
-
-    <!-- AI SUGGEST -->
-    <h3>AI Suggest</h3>
-    <p>GET /api/ai_suggest</p>
-    <button onclick="getAISuggest()">Get AI Suggestion</button>
-    <pre id="ai_result"></pre>
-
-    <hr>
-
-    <script>
-        let currentUserId = null;
-
-        async function registerUser() {
-            const email = document.getElementById("register_email").value;
-            const password = document.getElementById("register_password").value;
-
-            const response = await fetch("/api/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            });
-
-            const data = await response.json();
-            document.getElementById("register_result").textContent =
-                JSON.stringify(data, null, 2);
-        }
-
-        async function loginUser() {
-            const email = document.getElementById("login_email").value;
-            const password = document.getElementById("login_password").value;
-
-            const response = await fetch("/api/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            });
-
-            const data = await response.json();
-
-            if (data.user_id) {
-                currentUserId = data.user_id;
-                document.getElementById("buy_user_id").value = currentUserId;
-                document.getElementById("tickets_user_id").value = currentUserId;
-            }
-
-            document.getElementById("login_result").textContent =
-                JSON.stringify(data, null, 2);
-        }
-
-        async function buyTicket() {
-            // важно: преобразуем строку в число
-            const userId = parseInt(document.getElementById("buy_user_id").value, 10);
-            const eventName = document.getElementById("event_name").value;
-
-            const response = await fetch("/api/buy", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    user_id: userId,          // теперь число
-                    event_name: eventName
-                })
-            });
-
-            const data = await response.json();
-            document.getElementById("buy_result").textContent =
-                JSON.stringify(data, null, 2);
-        }
-
-        async function getTickets() {
-            const userId = parseInt(document.getElementById("tickets_user_id").value, 10);
-
-            const response = await fetch(
-                "/api/tickets?user_id=" + encodeURIComponent(userId)
-            );
-
-            const data = await response.json();
-            document.getElementById("tickets_result").textContent =
-                JSON.stringify(data, null, 2);
-        }
-
-        async function getAISuggest() {
-            const response = await fetch("/api/ai_suggest");
-            const data = await response.json();
-            document.getElementById("ai_result").textContent =
-                JSON.stringify(data, null, 2);
-        }
-    </script>
-
+    <script src="js/app.js"></script>
 </body>
 </html>

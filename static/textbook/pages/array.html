@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>1C Rush — Условные операторы</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    
+    <style>
+        /* Стили для изоляции шапки от стилей теории */
+        body {
+            background: #0B0B0F !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        /* Шапка и всё внутри — сброс стилей теории */
+        .header,
+        .header * {
+            all: revert !important;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .header {
+            background: rgba(11, 11, 15, 0.9) !important;
+            backdrop-filter: blur(8px) !important;
+            border-bottom: 1px solid #23232C !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+        }
+        .header-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            height: 70px !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 24px !important;
+        }
+        .logo-text {
+            font-size: 1.8rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            background: linear-gradient(135deg, #FFFFFF, #98C3F8) !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            color: transparent !important;
+        }
+        .nav {
+            display: flex !important;
+            gap: 28px !important;
+        }
+        .nav-link {
+            color: #A1A1B0 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: 0.2s !important;
+            font-size: 0.95rem !important;
+            background: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: #98C3F8 !important;
+        }
+        .auth-area {
+            background: #1A1A24 !important;
+            padding: 6px 14px !important;
+            border-radius: 40px !important;
+            font-size: 0.85rem !important;
+            border: 1px solid #2E2E3A !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: auto !important;
+            min-width: auto !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+        }
+        .auth-area a {
+            color: #98C3F8 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            background: none !important;
+            border-radius: 0 !important;
+        }
+        .auth-area button {
+            background: none !important;
+            border: none !important;
+            color: #F87171 !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+        /* Сдвигаем боковую панель и основной контент вниз, чтобы не перекрывались шапкой */
+        .sidebar {
+            position: fixed !important;
+            top: 70px !important;
+            left: 0 !important;
+            height: calc(100vh - 70px) !important;
+            overflow-y: auto !important;
+        }
+        .main-content {
+            margin-left: 280px !important;
+            padding-top: 90px !important;
+        }
+        
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+        .user-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+        }
+        .user-badge {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }
+        .user-name {
+            font-weight: 500 !important;
+            color: #E2E2E8 !important;
+        }
+        .logout-btn {
+            background: none !important;
+            border: 1px solid #F87171 !important;
+            color: #F87171 !important;
+            padding: 4px 12px !important;
+            border-radius: 20px !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+        }
+        .logout-btn:hover {
+            background: #F87171 !important;
+            color: white !important;
+        }
+    </style>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+    <!-- ===== ШАПКА ===== -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../../index.html" style="text-decoration: none;">
+                    <span class="logo-text">1C Rush</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="../../index.html" class="nav-link">Главная</a>
+                <a href="../../practical-tasks/practical.html" class="nav-link">Тренажёр</a>
+                <a href="conditions.html" class="nav-link active">Справочник</a>
+                <a href="../../profile.html" class="nav-link">Профиль</a>
+            </nav>
+            <div class="auth-area" id="authArea"></div>
+        </div>
+    </header>
+
+    <!-- ========== БОКОВАЯ ПАНЕЛЬ ========== -->
+    <nav class="sidebar">
+
+        <a href="variables.html">Переменные</a>
+
+        <div class="dropdown-toggle">
+            <span>Типы данных</span>
+            <span class="arrow">▸</span>
+        </div>
+        <div class="submenu">
+            <a href="strings.html">Строки</a>
+            <a href="numbers.html">Числа</a>
+            <a href="dates.html">Дата</a>
+            <a href="booleans.html">Булево</a>
+        </div>
+
+        <a href="type-conversion.html">Преобразование типов</a>
+        <a href="conditions.html">Условные операторы</a>
+        <a href="loops.html">Циклы</a>
+        <a href="functions-procedure.html">Процедуры и функции</a>
+        <a href="array.html">Массивы</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="guide-container">
+
+            <h1>1C Rush > Массивы</h1>
+
+            <h3>Что такое массив?</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        <a href="https://ru.ruwiki.ru/wiki/Массив_(тип_данных)" target="_blank" class="wiki-link">Массив</a> — это коллекция (объект встроенного языка), содержащая пронумерованную последовательность значений произвольного типа. 
+                        Каждому элементу присваивается последовательный целочисленный номер — <strong><a href="https://ru.ruwiki.ru/wiki/Индексация_(программирование)" target="_blank" class="wiki-link">идекс</a></strong>, начинающийся с нуля. 
+                        Благодаря индексам можно быстро получить доступ к любому элементу или изменить его. 
+                        Массивы широко используются для временного хранения данных, их группировки и передачи между процедурами.
+                        В 1С:Предприятие существует два типа массивов: обычный (изменяемый) и фиксированный (неизменяемый). 
+                        Обычный массив имеет динамический размер: количество элементов можно менять в процессе выполнения программы. 
+                        Фиксированный массив, наоборот, создаётся с заданным размером, и его нельзя изменить. 
+                        В этом уроке мы сосредоточимся на обычных массивах.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Анимированный блок -->
+            <div class="editor-block animated"
+                 data-examples='[
+                    "ПустойМассив = Новый Массив;",
+                    "МассивИз3 = Новый Массив(3);",
+                    "Двумерный = Новый Массив(2, 3);",
+                    "ФиксМассив = Новый ФиксированныйМассив(МассивИз3);",
+                    "МассивЧисел = [1, 2, 3, 4, 5];"
+                 ]'>
+                <textarea></textarea>
+            </div>
+
+            <h3>Создание массива</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Создать массив можно несколькими способами.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>// Пустой массив
+ПустойМассив = Новый Массив;
+
+// Массив с заданным количеством элементов (все элементы = Неопределено)
+МассивИз3 = Новый Массив(3);
+
+// Двумерный массив (массив массивов)
+Двумерный = Новый Массив(2, 3);  // 2 строки, 3 столбца
+
+// Фиксированный массив (неизменяемый)
+ФиксМассив = Новый ФиксированныйМассив(МассивИз3);
+
+// Создание с помощью литерала (краткая запись, доступна в новых версиях)
+МассивЧисел = [1, 2, 3, 4, 5];</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Основные методы работы с массивом</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        У массива есть несколько ключевых методов для управления элементами.
+                    </p>
+                </div>
+            </div>
+
+            <div class="transparent-table cm-s-monokai">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr><th>Описание</th><th>Пример</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Метод <code class="inline-code"><span class="cm-variable">Добавить</span><span class="cm-operator">(</span><span class="cm-variable">Значение</span><span class="cm-operator">)</span></code> добавляет элемент в конец массива.</td>
+                            <td><code class="inline-code"><span class="cm-variable">М</span><span class="cm-operator">.</span><span class="cm-variable">Добавить</span><span class="cm-operator">(</span><span class="cm-string-double">"строка"</span><span class="cm-operator">)</span></code></td>
+                        </tr>
+                        <tr>
+                            <td>Метод <code class="inline-code"><span class="cm-variable">Вставить</span><span class="cm-operator">(</span><span class="cm-variable">Индекс</span><span class="cm-operator">,</span> <span class="cm-variable">Значение</span><span class="cm-operator">)</span></code> вставляет элемент по указанному индексу, сдвигая остальные вправо.</td>
+                            <td><code class="inline-code"><span class="cm-variable">М</span><span class="cm-operator">.</span><span class="cm-variable">Вставить</span><span class="cm-operator">(</span><span class="cm-number">0</span><span class="cm-operator">,</span> <span class="cm-number">100</span><span class="cm-operator">)</span></code></td>
+                        </tr>
+                        <tr>
+                            <td>Метод <code class="inline-code"><span class="cm-variable">Удалить</span><span class="cm-operator">(</span><span class="cm-variable">Индекс</span><span class="cm-operator">)</span></code> удаляет элемент по индексу.</td>
+                            <td><code class="inline-code"><span class="cm-variable">М</span><span class="cm-operator">.</span><span class="cm-variable">Удалить</span><span class="cm-operator">(</span><span class="cm-number">2</span><span class="cm-operator">)</span></code></td>
+                        </tr>
+                        <tr>
+                            <td>Метод <code class="inline-code"><span class="cm-variable">Очистить</span><span class="cm-operator">(</span><span class="cm-operator">)</span></code> удаляет все элементы из массива.</td>
+                            <td><code class="inline-code"><span class="cm-variable">М</span><span class="cm-operator">.</span><span class="cm-variable">Очистить</span><span class="cm-operator">()</span></code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Получение информации о массиве</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Для получения сведений о массиве используются следующие методы и свойства.
+                    </p>
+                </div>
+            </div>
+
+            <div class="transparent-table cm-s-monokai">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr><th>Описание</th><th>Пример</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Метод <code class="inline-code"><span class="cm-variable">Количество</span><span class="cm-operator">(</span><span class="cm-operator">)</span></code> возвращает количество элементов в массиве.</td>
+                            <td><code class="inline-code"><span class="cm-variable">Кол</span> <span class="cm-operator">=</span> <span class="cm-variable">М</span><span class="cm-operator">.</span><span class="cm-variable">Количество</span><span class="cm-operator">()</span></code></td>
+                        </tr>
+                        <tr>
+                            <td>Метод <code class="inline-code"><span class="cm-variable">ВГраница</span><span class="cm-operator">(</span><span class="cm-operator">)</span></code> возвращает наибольший индекс массива (Количество - 1).</td>
+                            <td><code class="inline-code"><span class="cm-variable">ВерхняяГраница</span> <span class="cm-operator">=</span> <span class="cm-variable">М</span><span class="cm-operator">.</span><span class="cm-variable">ВГраница</span><span class="cm-operator">()</span></code></td>
+                        </tr>
+                        <tr>
+                            <td>Метод <code class="inline-code"><span class="cm-variable">Найти</span><span class="cm-operator">(</span><span class="cm-variable">Значение</span><span class="cm-operator">)</span></code> ищет элемент в массиве, возвращает его индекс или <span class="cm-keyword-purple">Неопределено</span>.</td>
+                            <td><code class="inline-code"><span class="cm-variable">Индекс</span> <span class="cm-operator">=</span> <span class="cm-variable">М</span><span class="cm-operator">.</span><span class="cm-variable">Найти</span><span class="cm-operator">(</span><span class="cm-string-double">"искомое"</span><span class="cm-operator">)</span></code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>Массив = Новый Массив;
+Массив.Добавить("один");
+Массив.Добавить("два");
+Массив.Добавить("три");
+
+// Количество элементов
+Сообщить(Массив.Количество());              // 3
+
+// Верхняя граница (наибольший индекс)
+Сообщить(Массив.ВГраница());               // 2
+
+// Поиск элемента
+Индекс = Массив.Найти("два");
+Если Индекс <> Неопределено Тогда
+    Сообщить("Элемент найден по индексу: " + Индекс);  // 1
+КонецЕсли;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Доступ к элементам: чтение и запись</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Получить или изменить значение элемента можно с помощью квадратных скобок с указанием индекса или методов <span class="cm-variable">Получить</span> и <span class="cm-variable">Установить</span>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>// Создаём массив на 3 элемента
+Массив = Новый Массив(3);
+
+// Присваиваем значения через квадратные скобки
+Массив[0] = "Первый";
+Массив[1] = "Второй";
+Массив[2] = "Третий";
+
+// Чтение через квадратные скобки
+Сообщить(Массив[0]);  // "Первый"
+
+// Альтернативный способ: методы Получить и Установить
+Массив.Установить(1, "Два");
+Значение = Массив.Получить(1);
+Сообщить(Значение);   // "Два"
+
+// Обращение к несуществующему индексу вызовет ошибку!
+// Сообщить(Массив[10]);  // Ошибка: Индекс вне границ</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Обход массива (перебор элементов)</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Чаще всего элементы массива обрабатываются в циклах.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>Массив = [10, 20, 30, 40, 50];
+
+// Способ 1: цикл Для по индексу (нужен, если нужен индекс)
+Для Индекс = 0 По Массив.ВГраница() Цикл
+    Сообщить("Элемент " + Индекс + ": " + Массив[Индекс]);
+КонецЦикла;
+
+// Способ 2: цикл Для каждого (когда индекс не нужен)
+Для каждого Элемент Из Массив Цикл
+    Сообщить(Элемент);
+КонецЦикла;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Многомерные массивы</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        В 1С можно создавать многомерные массивы — массивы, элементами которых являются другие массивы.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>// Создание двумерного массива 2x3
+М = Новый Массив(2, 3);
+
+// Заполнение
+Для i = 0 По М.ВГраница() Цикл
+    Для j = 0 По М[i].ВГраница() Цикл
+        М[i][j] = i * 10 + j;
+    КонецЦикла;
+КонецЦикла;
+
+// Вывод
+Для i = 0 По М.ВГраница() Цикл
+    СтрокаВывода = "";
+    Для j = 0 По М[i].ВГраница() Цикл
+        СтрокаВывода = СтрокаВывода + М[i][j] + " ";
+    КонецЦикла;
+    Сообщить(СтрокаВывода);
+КонецЦикла;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Фиксированный массив (неизменяемый)</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        В 1С также существует тип <strong>«Фиксированный массив»</strong>. В отличие от обычного, его размер и значения нельзя изменить после создания. 
+                        Он полезен, когда нужно защитить данные от случайного изменения или передать коллекцию на клиент/сервер.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>// Создание обычного массива
+ОбычныйМассив = Новый Массив;
+ОбычныйМассив.Добавить("A");
+ОбычныйМассив.Добавить("B");
+ОбычныйМассив.Добавить("C");
+
+// Создание фиксированного массива на основе обычного
+ФиксМассив = Новый ФиксированныйМассив(ОбычныйМассив);
+
+// Чтение из фиксированного массива возможно
+Сообщить(ФиксМассив[0]);   // "A"
+
+// Изменение невозможно!
+// ФиксМассив[0] = "D";      // Ошибка: Массив фиксированный
+// ФиксМассив.Добавить("D"); // Ошибка: Метод недоступен
+
+// Доступные методы: Количество(), ВГраница(), Найти(), Получить()</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Массивы структур</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Массив может хранить элементы любого типа, включая <strong>«Структуру»</strong>. 
+                        Это позволяет создать коллекцию, где каждый элемент является набором именованных полей (пар «Ключ-Значение»).
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>// Создаём массив структур
+Сотрудники = Новый Массив;
+
+// Добавляем структуры
+Сотрудник1 = Новый Структура("ФИО, Отдел, Зарплата", "Иванов И.И.", "ИТ", 80000);
+Сотрудник2 = Новый Структура("ФИО, Отдел, Зарплата", "Петрова А.С.", "Бухгалтерия", 70000);
+Сотрудники.Добавить(Сотрудник1);
+Сотрудники.Добавить(Сотрудник2);
+
+// Обход и обращение к полям через точку
+Для каждого Сотрудник Из Сотрудники Цикл
+    Сообщить("Сотрудник: " + Сотрудник.ФИО + ", отдел: " + Сотрудник.Отдел);
+КонецЦикла;
+
+// Изменение значения поля у конкретного элемента
+Сотрудники[0].Зарплата = 85000;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Сравнение массивов</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Массивы можно сравнивать между собой. Два массива считаются равными, если их размеры совпадают и элементы на соответствующих индексах равны.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>Массив1 = [1, 2, 3];
+Массив2 = [1, 2, 3];
+Массив3 = [1, 2, 3, 4];
+
+Если Массив1 = Массив2 Тогда
+    Сообщить("Массивы равны");  // Это сообщение будет выведено
+КонецЕсли;
+
+Если Массив1 = Массив3 Тогда
+    Сообщить("Массивы равны");
+Иначе
+    Сообщить("Массивы не равны");  // Разное количество элементов
+КонецЕсли;</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../../js/app.js"></script>
+</body>
+</html>

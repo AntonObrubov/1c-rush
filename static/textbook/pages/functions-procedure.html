@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>1C Rush — Процедуры и функции</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    
+    <style>
+        /* Стили для изоляции шапки от стилей теории */
+        body {
+            background: #0B0B0F !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        /* Шапка и всё внутри — сброс стилей теории */
+        .header,
+        .header * {
+            all: revert !important;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .header {
+            background: rgba(11, 11, 15, 0.9) !important;
+            backdrop-filter: blur(8px) !important;
+            border-bottom: 1px solid #23232C !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+        }
+        .header-container {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            height: 70px !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 24px !important;
+        }
+        .logo-text {
+            font-size: 1.8rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            background: linear-gradient(135deg, #FFFFFF, #98C3F8) !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            color: transparent !important;
+        }
+        .nav {
+            display: flex !important;
+            gap: 28px !important;
+        }
+        .nav-link {
+            color: #A1A1B0 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: 0.2s !important;
+            font-size: 0.95rem !important;
+            background: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            color: #98C3F8 !important;
+        }
+        .auth-area {
+            background: #1A1A24 !important;
+            padding: 6px 14px !important;
+            border-radius: 40px !important;
+            font-size: 0.85rem !important;
+            border: 1px solid #2E2E3A !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            width: auto !important;
+            min-width: auto !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+            margin: 0 !important;
+        }
+        .auth-area a {
+            color: #98C3F8 !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            background: none !important;
+            border-radius: 0 !important;
+        }
+        .auth-area button {
+            background: none !important;
+            border: none !important;
+            color: #F87171 !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+        }
+        /* Сдвигаем боковую панель и основной контент вниз, чтобы не перекрывались шапкой */
+        .sidebar {
+            position: fixed !important;
+            top: 70px !important;
+            left: 0 !important;
+            height: calc(100vh - 70px) !important;
+            overflow-y: auto !important;
+        }
+        .main-content {
+            margin-left: 280px !important;
+            padding-top: 90px !important;
+        }
+        
+        .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+        .user-avatar img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+        }
+        .user-badge {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+        }
+        .user-name {
+            font-weight: 500 !important;
+            color: #E2E2E8 !important;
+        }
+        .logout-btn {
+            background: none !important;
+            border: 1px solid #F87171 !important;
+            color: #F87171 !important;
+            padding: 4px 12px !important;
+            border-radius: 20px !important;
+            cursor: pointer !important;
+            font-size: 0.8rem !important;
+        }
+        .logout-btn:hover {
+            background: #F87171 !important;
+            color: white !important;
+        }
+    </style>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+
+    <!-- ===== ШАПКА ===== -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../../index.html" style="text-decoration: none;">
+                    <span class="logo-text">1C Rush</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="../../index.html" class="nav-link">Главная</a>
+                <a href="../../practical-tasks/practical.html" class="nav-link">Тренажёр</a>
+                <a href="conditions.html" class="nav-link active">Справочник</a>
+                <a href="../../profile.html" class="nav-link">Профиль</a>
+            </nav>
+            <div class="auth-area" id="authArea"></div>
+        </div>
+    </header>
+
+    <!-- ========== БОКОВАЯ ПАНЕЛЬ ========== -->
+    <nav class="sidebar">
+        <a href="variables.html">Переменные</a>
+
+        <div class="dropdown-toggle">
+            <span>Типы данных</span>
+            <span class="arrow">▸</span>
+        </div>
+        <div class="submenu">
+            <a href="strings.html">Строки</a>
+            <a href="numbers.html">Числа</a>
+            <a href="dates.html">Дата</a>
+            <a href="booleans.html">Булево</a>
+        </div>
+
+        <a href="type-conversion.html">Преобразование типов</a>
+        <a href="conditions.html">Условные операторы</a>
+        <a href="loops.html">Циклы</a>
+        <a href="functions-procedure.html">Процедуры и функции</a>
+        <a href="array.html">Массивы</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="guide-container">
+
+            <h1>1C Rush > Процедуры и функции</h1>
+
+            <h3>Что такое подпрограммы?</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Процедуры и функции — это <strong><a href="https://ru.ruwiki.ru/wiki/Пространство_имён_(программирование)" target="_blank" class="wiki-link">именованные блоки кода</a> </strong>, которые можно вызывать многократно из разных мест программы. 
+                        Они позволяют избежать дублирования кода, структурировать программу и упростить её поддержку. 
+                        В 1С:Предприятие любая программа состоит из модулей, а модули — из процедур и функций.
+                        Разница между ними проста: <strong>функция возвращает значение</strong> (результат своей работы), а <strong>процедура — нет</strong>. 
+                        В остальном они ведут себя одинаково: могут принимать параметры, иметь локальные переменные, быть экспортными (доступными из других модулей).
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block animated"
+                 data-examples='[
+                    "Процедура Приветствие()\n    Сообщить(\"Привет!\");\nКонецПроцедуры",
+                    "Функция Сумма(а, б)\n    Возврат а + б;\nКонецФункции",
+                    "Процедура ЗаписатьЛог(Текст) Экспорт\n    // запись в лог\nКонецПроцедуры"
+                 ]'>
+                <textarea></textarea>
+            </div>
+
+            <h3>Синтаксис описания</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Процедура объявляется с помощью ключевого слова <span class="cm-keyword-purple">Процедура</span>, затем следует имя и список параметров в скобках. 
+                        Завершается конструкция словом <span class="cm-keyword-purple">КонецПроцедуры</span>. Функция отличается тем, что начинается с <span class="cm-keyword-purple">Функция</span> и обязана содержать оператор <span class="cm-keyword-purple">Возврат</span>. 
+                        Скобки после имени обязательны, даже если параметров нет. Точку с запятой после <span class="cm-keyword-purple">КонецПроцедуры</span> / <span class="cm-keyword-purple">КонецФункции</span> ставить <strong>не нужно</strong>.
+                        Тело процедуры или функции может содержать любые операторы, включая вызовы других подпрограмм (вложенные объявления запрещены, только на уровне модуля).
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>// Процедура без параметров
+Процедура Приветствие()
+    Сообщить("Добро пожаловать в 1С!");
+КонецПроцедуры
+
+// Функция с параметрами
+Функция Сумма(а, б)
+    Возврат а + б;
+КонецФункции
+
+// Вызов
+Приветствие();
+Результат = Сумма(10, 20);
+Сообщить(Результат); // 30</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Параметры передачи по ссылке и значению</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        По умолчанию параметры передаются <strong>по ссылке</strong> — изменения параметра внутри процедуры влияют на исходную переменную. 
+                        Чтобы защитить исходные данные, используйте ключевое слово <span class="cm-keyword-purple">Знач</span> перед параметром — тогда внутри подпрограммы будет работать копия.
+                        <br><br>
+                        <strong>По ссылке (без Знач):</strong> <code class="inline-code"><span class="cm-keyword-purple">Процедура</span> <span class="cm-variable">Изменить</span><span class="cm-operator">(</span><span class="cm-variable">Число</span><span class="cm-operator">)</span></code> — изменяет исходную переменную.
+                        <br><br>
+                        <strong>По значению (со Знач):</strong> <code class="inline-code"><span class="cm-keyword-purple">Процедура</span> <span class="cm-variable">Изменить</span><span class="cm-operator">(</span><span class="cm-keyword-purple">Знач</span> <span class="cm-variable">Число</span><span class="cm-operator">)</span></code> — работает с копией, исходная не меняется.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>Процедура ИзменитьПоСсылке(Параметр)
+    Параметр = 100;
+КонецПроцедуры
+
+Процедура ИзменитьПоЗначению(Знач Параметр)
+    Параметр = 100;
+КонецПроцедуры
+
+Перем х;
+х = 10;
+
+ИзменитьПоСсылке(х);
+Сообщить(х); // 100 — исходная переменная изменилась
+
+х = 10;
+ИзменитьПоЗначению(х);
+Сообщить(х); // 10 — осталась прежней</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Области видимости переменных</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Переменные в 1С различаются по области видимости. Локальные переменные объявляются внутри процедуры или функции простым присваиванием и видны только в ней. Модульные переменные объявляются в начале модуля с ключевым словом <span class="cm-keyword-purple">Перем</span> и видны всем процедурам и функциям этого модуля, но не доступны из других модулей, если не указано <span class="cm-keyword-purple">Экспорт</span>. Глобальные переменные — это те же модульные, но с ключевым словом <span class="cm-keyword-purple">Экспорт</span>, они доступны из любых других модулей. Важно помнить: если внутри процедуры присвоить значение переменной, которая не была объявлена локально, 1С начнёт искать её среди модульных и глобальных. Чтобы гарантированно создать локальную переменную, даже если в модуле уже есть переменная с таким же именем, используйте ключевое слово <span class="cm-keyword-purple">Перем</span> прямо внутри процедуры.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>// Модуль
+Перем МодульнаяПеременная;  // видна всем процедурам модуля
+
+Процедура Тест()
+    Перем Локальная;         // видна только внутри Тест
+    МодульнаяПеременная = 1; // изменяет модульную переменную
+    Локальная = 2;
+КонецПроцедуры
+
+Процедура Другая()
+    Сообщить(МодульнаяПеременная); // 1
+    // Локальная здесь недоступна!
+КонецПроцедуры</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Экспортные процедуры и функции</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        Чтобы сделать процедуру или функцию доступной из других модулей, добавьте ключевое слово <span class="cm-keyword-purple">Экспорт</span> после списка параметров. 
+                        Это основа для создания публичного API модуля.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>// В модуле "ОбщийМодульУтилиты" с установленными свойствами "Сервер", "Клиент"
+Функция ПолучитьКурсВалюты(Валюта) Экспорт
+    // реализация
+    Возврат Курс;
+КонецФункции
+
+Процедура ЗаписатьЖурнал(Событие) Экспорт
+    // реализация
+КонецПроцедуры
+
+// В другом модуле (например, модуль формы)
+КурсДоллара = ОбщийМодульУтилиты.ПолучитьКурсВалюты("USD");</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Параметры по умолчанию</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        При описании функции или процедуры можно задать значения параметров <strong>по умолчанию</strong>. 
+                        Тогда при вызове этот параметр можно опустить — он получит указанное значение. 
+                        Параметры без значения по умолчанию являются обязательными.
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>Функция РассчитатьСкидку(Сумма, Процент = 5, Округлять = Истина)
+    Скидка = Сумма * Процент / 100;
+    Если Округлять Тогда
+        Скидка = Окр(Скидка, 2);
+    КонецЕсли;
+    Возврат Скидка;
+КонецФункции
+
+// Вызовы
+Скидка1 = РассчитатьСкидку(1000);          // процент = 5, округление = Истина
+Скидка2 = РассчитатьСкидку(1000, 10);      // процент = 10
+Скидка3 = РассчитатьСкидку(1000, 10, Ложь); // явно указали все параметры</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+
+            <h3>Оператор Возврат</h3>
+
+            <div class="cm-s-monokai">
+                <div class="subtitle">
+                    <p>
+                        В <strong>функции</strong> оператор <span class="cm-keyword-purple">Возврат</span> обязателен — он задаёт возвращаемое значение. 
+                        Если в функции нет <span class="cm-keyword-purple">Возврат</span> или он не выполнился ни в одной ветке, функция вернёт <span class="cm-keyword-purple">Неопределено</span>.
+                        В <strong>процедуре</strong> <span class="cm-keyword-purple">Возврат</span> можно использовать только для досрочного выхода (без указания значения после него).
+                    </p>
+                </div>
+            </div>
+
+            <div class="editor-block static" style="position: relative;">
+                <textarea>Процедура ОбработкаЗаказа(Заказ)
+    Если Заказ.Сумма = 0 Тогда
+        Сообщить("Нулевая сумма, обработка прервана");
+        Возврат;   // досрочный выход
+    КонецЕсли;
+    // дальнейшая обработка
+КонецПроцедуры
+
+Функция ПолучитьСуммуНДС(Сумма, Ставка = 20)
+    Если Сумма <= 0 Тогда
+        Возврат 0;   // защита от неверных данных
+    КонецЕсли;
+    Возврат Сумма * Ставка / 100;
+КонецФункции</textarea>
+                <button class="copy-btn" title="Копировать">
+                    <img src="../img/copy.png" alt="Копировать" width="20" height="20"> Copy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../../js/app.js"></script>
+</body>
+</html>

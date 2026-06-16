@@ -96,17 +96,23 @@ function isAuthorized() {
     return !!localStorage.getItem('user_id');
 }
 
+function getApiBase() {
+    return window.API_BASE || '/api';
+}
+
 async function loadSolvedTasks() {
     solvedTasks.clear();
     if (!isAuthorized()) return;
     const userId = localStorage.getItem('user_id');
     try {
-        const res = await fetch(`http://localhost:8080/api/solved-tasks?user_id=${userId}`);
+        const res = await fetch(`${getApiBase()}/solved-tasks?user_id=${userId}`);
         const data = await res.json();
         if (data.success && data.tasks) {
             data.tasks.forEach(origIdx => solvedTasks.add(origIdx));
         }
-    } catch (e) {}
+    } catch (e) {
+        console.warn('Не удалось загрузить решённые задачи:', e);
+    }
 }
 
 function isTaskSolved() {
@@ -177,12 +183,14 @@ function checkCurrentCode() {
         lastCheckWrong = false;
 
         if (!isTaskSolved()) {
-            // Добавляем в локальный набор для отображения
             solvedTasks.add(task.originalIndex);
             updateTaskStatus();
-            // Отправляем на сервер и обновляем статистику
             if (typeof window.incrementTasksSolved === 'function') {
-                window.incrementTasksSolved(task.originalIndex);
+                try {
+                    window.incrementTasksSolved(task.originalIndex);
+                } catch (e) {
+                    console.warn('Ошибка при вызове incrementTasksSolved:', e);
+                }
             }
         }
     } else {
@@ -238,14 +246,32 @@ function fullHint() {
 
 function copyHintCode() {
     const task = shuffledTasks[currentIndex];
-    navigator.clipboard.writeText(task.fullHint).then(() => {
+    const code = task.fullHint;
+    navigator.clipboard.writeText(code).then(() => {
         const btn = document.querySelector('.hint-copy-btn');
         if (btn) {
             const img = btn.querySelector('img');
             if (img) img.src = 'img/mark.png';
             setTimeout(() => { if (img) img.src = 'img/copy.png'; }, 1500);
         }
-    }).catch(() => {});
+    }).catch(() => {
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            const btn = document.querySelector('.hint-copy-btn');
+            if (btn) {
+                const img = btn.querySelector('img');
+                if (img) img.src = 'img/mark.png';
+                setTimeout(() => { if (img) img.src = 'img/copy.png'; }, 1500);
+            }
+        } catch (e) {
+            console.warn('Не удалось скопировать');
+        }
+        textarea.remove();
+    });
 }
 
 function nextTask() {

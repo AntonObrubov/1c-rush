@@ -1,39 +1,26 @@
-// ==================== РЕЖИМ ПОДСВЕТКИ 1С (с поддержкой многострочных строк) ====================
 CodeMirror.defineMode("1c", function() {
     const keywordsPurple = [
-        "Если", "Тогда", "ИначеЕсли", "Иначе", "КонецЕсли",
-        "Цикл", "КонецЦикла", "Для", "Каждого", "Из", "По", "Пока", "Прервать", "Продолжить",
-        "Процедура", "КонецПроцедуры", "Функция", "КонецФункции",
-        "Возврат", "Экспорт", "Попытка", "Исключение", "ВызватьИсключение", "КонецПопытки",
-        "Перем", "Новый", "NULL", "ИСТИНА", "ЛОЖЬ", "Неопределено",
-        "И", "ИЛИ", "НЕ"
+        "Если","Тогда","ИначеЕсли","Иначе","КонецЕсли",
+        "Цикл","КонецЦикла","Для","Из","По","Пока","Прервать","Продолжить",
+        "Процедура","КонецПроцедуры","Функция","КонецФункции",
+        "Возврат","Экспорт","Попытка","Исключение","ВызватьИсключение","КонецПопытки",
+        "Перем","Новый","NULL","ИСТИНА","ЛОЖЬ","Неопределено",
+        "И","ИЛИ","НЕ"
     ];
     const keywordsBlue = [
-        "ДляКаждого", "Шаг", "В", "МЕЖДУ", "ПОДОБНО", "КАК",
-        "Дата", "Строка", "Число", "Булево", "Массив", "Структура",
-        "Соответствие", "ТаблицаЗначений",
-        "Выбрать", "ГДЕ", "УПОРЯДОЧИТЬ", "СГРУППИРОВАТЬ", "ИМЕЮЩИЕ",
-        "ОБЪЕДИНИТЬ", "ВСЕ", "ПЕРВЫЕ", "ВНУТРЕННЕЕ", "ЛЕВОЕ", "ПРАВОЕ",
-        "ПОЛНОЕ", "СОЕДИНЕНИЕ", "ЗНАЧЕНИЕ"
+        "ДляКаждого","Шаг","В","МЕЖДУ","ПОДОБНО","КАК",
+        "Дата","Строка","Число","Булево","Массив","Структура",
+        "Соответствие","ТаблицаЗначений",
+        "Выбрать","ГДЕ","УПОРЯДОЧИТЬ","СГРУППИРОВАТЬ","ИМЕЮЩИЕ",
+        "ОБЪЕДИНИТЬ","ВСЕ","ПЕРВЫЕ","ВНУТРЕННЕЕ","ЛЕВОЕ","ПРАВОЕ",
+        "ПОЛНОЕ","СОЕДИНЕНИЕ","ЗНАЧЕНИЕ"
     ];
     const purpleSet = new Set(keywordsPurple.map(w => w.toLowerCase()));
     const blueSet = new Set(keywordsBlue.map(w => w.toLowerCase()));
 
     return {
-        startState: function() {
-            return { inString: false };
-        },
-        token: function(stream, state) {
+        token: function(stream) {
             if (stream.eatSpace()) return null;
-            if (state.inString) {
-                let ch, escaped = false;
-                while ((ch = stream.next()) != null) {
-                    if (ch === '\\' && !escaped) { escaped = true; continue; }
-                    if (ch === '"' && !escaped) { state.inString = false; return "string-double"; }
-                    escaped = false;
-                }
-                return "string-double";
-            }
             if (stream.match("//")) { stream.skipToEnd(); return "comment"; }
             if (stream.match("/*")) {
                 let ch;
@@ -44,12 +31,12 @@ CodeMirror.defineMode("1c", function() {
             }
             if (stream.peek() === '"') {
                 stream.next();
-                state.inString = true;
-                let ch, escaped = false;
-                while ((ch = stream.next()) != null) {
-                    if (ch === '\\' && !escaped) { escaped = true; continue; }
-                    if (ch === '"' && !escaped) { state.inString = false; return "string-double"; }
-                    escaped = false;
+                let escaped = false;
+                while (!stream.eol()) {
+                    let ch = stream.next();
+                    if (ch === '"' && !escaped) break;
+                    if (ch === '\\') escaped = !escaped;
+                    else escaped = false;
                 }
                 return "string-double";
             }
@@ -58,14 +45,15 @@ CodeMirror.defineMode("1c", function() {
                 let escaped = false;
                 while (!stream.eol()) {
                     let ch = stream.next();
+                    if (ch === "'" && !escaped) break;
                     if (ch === '\\') escaped = !escaped;
-                    else if (ch === "'" && !escaped) break;
                     else escaped = false;
                 }
                 return "string-single";
             }
             if (stream.match(/^-?\d+(\.\d+)?/)) return "number";
             if (stream.match(/^#\d{4}-\d{2}-\d{2}#/)) return "atom";
+
             if (stream.match(/[A-Za-zА-Яа-я_][A-Za-zА-Яа-я0-9_]*/)) {
                 const word = stream.current();
                 const lowerWord = word.toLowerCase();
@@ -73,8 +61,10 @@ CodeMirror.defineMode("1c", function() {
                 if (blueSet.has(lowerWord)) return "keyword-blue";
                 return "variable";
             }
+
             if (stream.match(/[=+\-*/%<>!&|~^?]/)) return "operator";
             if (stream.match(/[(){}[\].,;:]/)) return "operator";
+
             stream.next();
             return null;
         },
@@ -83,7 +73,6 @@ CodeMirror.defineMode("1c", function() {
 });
 CodeMirror.defineMIME("text/x-1c", "1c");
 
-// ==================== ФУНКЦИИ АНИМАЦИИ ====================
 function animateCodeInEditor(editor, code, onComplete) {
     let timeout = null;
     let i = 0;
@@ -129,9 +118,8 @@ function startAnimationLoop(editor, examplesArray) {
     return () => { active = false; if (timeout) clearTimeout(timeout); };
 }
 
-// ==================== ИНИЦИАЛИЗАЦИЯ ВСЕХ БЛОКОВ ====================
-document.addEventListener('DOMContentLoaded', () => {
-    // Инициализация CodeMirror для всех .editor-block
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработка всех .editor-block
     document.querySelectorAll('.editor-block').forEach(block => {
         const textarea = block.querySelector('textarea');
         if (!textarea) return;
@@ -180,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const successSrc = '../img/mark.png';
             const errorSrc = '../img/cross.png';
             let restoreTimer = null;
-            copyBtn.addEventListener('click', (e) => {
+            copyBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (restoreTimer) clearTimeout(restoreTimer);
                 const code = editor.getValue();
@@ -188,38 +176,43 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (img) img.src = successSrc;
                     restoreTimer = setTimeout(() => { if (img) img.src = originalSrc; }, 1500);
                 }).catch(() => {
-                    if (img) img.src = errorSrc;
-                    restoreTimer = setTimeout(() => { if (img) img.src = originalSrc; }, 1500);
+                    const textarea = document.createElement('textarea');
+                    textarea.value = code;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        if (img) img.src = successSrc;
+                        restoreTimer = setTimeout(() => { if (img) img.src = originalSrc; }, 1500);
+                    } catch (e2) {
+                        if (img) img.src = errorSrc;
+                        restoreTimer = setTimeout(() => { if (img) img.src = originalSrc; }, 1500);
+                    }
+                    textarea.remove();
                 });
             });
         }
     });
 
-    // ----- Кнопка "Показать результат" для скриншота -----
-    const toggleBtn = document.querySelector('.screenshot-demo .toggle-screenshot');
-    const contentDiv = document.querySelector('.screenshot-demo .screenshot-content');
-    if (toggleBtn && contentDiv) {
-        toggleBtn.addEventListener('click', () => {
-            if (contentDiv.style.maxHeight && contentDiv.style.maxHeight !== '0px') {
-                contentDiv.style.maxHeight = '0';
-                contentDiv.style.marginTop = '0';
-                toggleBtn.textContent = 'Показать результат';
+    document.querySelectorAll('.screenshot-demo .toggle-screenshot').forEach(btn => {
+        const content = btn.parentElement.querySelector('.screenshot-content');
+        if (!content) return;
+        btn.addEventListener('click', function() {
+            if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                content.style.maxHeight = '0';
+                content.style.marginTop = '0';
+                btn.textContent = 'Показать результат';
             } else {
-                contentDiv.style.maxHeight = contentDiv.scrollHeight + 'px';
-                contentDiv.style.marginTop = '10px';
-                toggleBtn.textContent = 'Скрыть результат';
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.marginTop = '10px';
+                btn.textContent = 'Скрыть результат';
             }
         });
-    }
+    });
 
-    // ==================== БОКОВАЯ ПАНЕЛЬ: СОХРАНЕНИЕ СОСТОЯНИЯ ДРОПДАУНОВ ====================
-    const toggles = document.querySelectorAll('.sidebar .dropdown-toggle');
-    toggles.forEach(toggle => {
-        // Находим текст заголовка (например "Типы данных")
+    document.querySelectorAll('.sidebar .dropdown-toggle').forEach(toggle => {
         const titleSpan = toggle.querySelector('span:first-child');
         const menuId = titleSpan ? titleSpan.innerText.trim() : 'default';
-        
-        // Восстанавливаем состояние из localStorage
         const isOpen = localStorage.getItem(`dropdown_${menuId}`) === 'true';
         if (isOpen) {
             toggle.classList.add('open');
@@ -228,8 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 submenu.classList.add('open');
             }
         }
-        
-        // Обработчик клика с сохранением
         toggle.addEventListener('click', function(e) {
             e.stopPropagation();
             this.classList.toggle('open');

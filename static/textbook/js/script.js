@@ -118,8 +118,46 @@ function startAnimationLoop(editor, examplesArray) {
     return () => { active = false; if (timeout) clearTimeout(timeout); };
 }
 
+function copyText(text, buttonElement) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            if (buttonElement) showCopied(buttonElement);
+        }).catch(() => {
+            fallbackCopy(text, buttonElement);
+        });
+    } else {
+        fallbackCopy(text, buttonElement);
+    }
+}
+
+function fallbackCopy(text, buttonElement) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.top = '-10000px';
+    textarea.style.left = '-10000px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        const success = document.execCommand('copy');
+        if (success && buttonElement) showCopied(buttonElement);
+        else if (!success) console.warn('Copy failed');
+    } catch (e) {
+        console.warn('Copy error:', e);
+    }
+    document.body.removeChild(textarea);
+}
+
+function showCopied(buttonElement) {
+    const img = buttonElement.querySelector('img');
+    if (img) {
+        const originalSrc = img.src;
+        img.src = '../img/mark.png';
+        setTimeout(() => { img.src = originalSrc; }, 1500);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Обработка всех .editor-block
     document.querySelectorAll('.editor-block').forEach(block => {
         const textarea = block.querySelector('textarea');
         if (!textarea) return;
@@ -163,33 +201,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const copyBtn = block.querySelector('.copy-btn');
         if (copyBtn) {
             header.appendChild(copyBtn);
-            const img = copyBtn.querySelector('img');
-            const originalSrc = '../img/copy.png';
-            const successSrc = '../img/mark.png';
-            const errorSrc = '../img/cross.png';
-            let restoreTimer = null;
             copyBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                if (restoreTimer) clearTimeout(restoreTimer);
-                const code = editor.getValue();
-                navigator.clipboard.writeText(code).then(() => {
-                    if (img) img.src = successSrc;
-                    restoreTimer = setTimeout(() => { if (img) img.src = originalSrc; }, 1500);
-                }).catch(() => {
-                    const textarea = document.createElement('textarea');
-                    textarea.value = code;
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    try {
-                        document.execCommand('copy');
-                        if (img) img.src = successSrc;
-                        restoreTimer = setTimeout(() => { if (img) img.src = originalSrc; }, 1500);
-                    } catch (e2) {
-                        if (img) img.src = errorSrc;
-                        restoreTimer = setTimeout(() => { if (img) img.src = originalSrc; }, 1500);
+                const cmInstance = block.querySelector('.CodeMirror');
+                let code = '';
+                if (cmInstance && cmInstance.CodeMirror) {
+                    const editor = cmInstance.CodeMirror;
+                    if (editor && typeof editor.getValue === 'function') {
+                        code = editor.getValue();
                     }
-                    textarea.remove();
-                });
+                }
+                if (!code) code = textarea.value;
+                copyText(code, this);
             });
         }
     });

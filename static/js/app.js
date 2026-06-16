@@ -42,7 +42,6 @@ function updateAuthUI() {
         authArea.innerHTML = `<div class="user-badge"><div class="user-avatar">${avatarHtml}</div><span class="user-name">${getDisplayName()}</span><button id="logoutBtnHeader" class="logout-btn">Выйти</button></div>`;
         document.getElementById('logoutBtnHeader').onclick = () => { Auth.logout(); location.reload(); };
     } else {
-        // ИСПРАВЛЕНО: добавлены слеши перед именами файлов
         authArea.innerHTML = `<a href="/login.html">Вход</a> / <a href="/register.html">Регистрация</a>`;
     }
 }
@@ -96,7 +95,6 @@ async function loadProfilePage() {
     };
     document.getElementById('logoutBtnProfile').onclick = () => { Auth.logout(); window.location.href = '/index.html'; };
 
-    // Загрузка аватара
     const avatarImg = document.getElementById('avatarImg');
     const avatarUpload = document.getElementById('avatarUpload');
     const savedAvatar = localStorage.getItem('user_avatar');
@@ -125,19 +123,16 @@ async function loadProfilePage() {
     }
 }
 
-// === ФУНКЦИЯ ОБНОВЛЕНИЯ СТАТИСТИКИ ===
 window.refreshStats = async function() {
     const userId = localStorage.getItem('user_id');
     if (!userId) return;
     const res = await fetch(`${API_BASE}/profile?user_id=${userId}`);
     const data = await res.json();
     if (!data.success) return;
-    // Обновляем главную страницу
     const daysEl = document.getElementById('daysCount');
     const tasksEl = document.getElementById('tasksSolved');
     if (daysEl) daysEl.textContent = data.days_count;
     if (tasksEl) tasksEl.textContent = data.tasks_solved;
-    // Обновляем профиль
     const profTasks = document.getElementById('profileTasksSolved');
     const profDays = document.getElementById('profileDaysCount');
     const progressBar = document.getElementById('progressBar');
@@ -154,14 +149,12 @@ window.refreshStats = async function() {
         const percent = total ? Math.min(100, Math.round((data.tasks_solved / total)*100)) : 0;
         progressPercent.textContent = percent+'%';
     }
-    // Обновляем приветствие на главной
     const greeting = document.getElementById('greetingMessage');
     if (greeting && document.body.dataset.page === 'index') {
         greeting.innerHTML = `С возвращением, <strong>${data.display_name || data.email}</strong>!`;
     }
 };
 
-// === ФУНКЦИЯ УВЕЛИЧЕНИЯ СЧЁТЧИКА (принимает индекс задачи) ===
 window.incrementTasksSolved = async function(taskIndex) {
     const userId = localStorage.getItem('user_id');
     if (!userId) return;

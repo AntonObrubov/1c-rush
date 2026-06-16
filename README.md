@@ -1,8 +1,9 @@
-# Service — Backend API Core
+# 1C-Rush
 
 Учебный проект по дисциплине «Проектный практикум».  
 
-Проект представляет собой backend-сервер для веб-приложения с REST API, SQLite и разделением frontend/backend архитектуры.
+Проект представляет собой backend-сервер для веб-приложения 1C-Rush с SQLite и разделением frontend/backend архитектуры.
+Сам Front-end представляет из себя базовые знания в области 1С:Предприятие 8.3 
 
 ## Команда
 
@@ -16,7 +17,8 @@
 ## Технологический стек
 
 - C++17  
-- cpp-httplib  
+- cpp-httplib
+- picosha2.h
 - SQLite (файл tickets.db)  
 - nlohmann/json  
 - HTML + JavaScript  

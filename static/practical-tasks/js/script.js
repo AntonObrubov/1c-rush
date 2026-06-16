@@ -244,33 +244,70 @@ function fullHint() {
     setTimeout(() => hintEditor.refresh(), 10);
 }
 
+function copyText(text, buttonElement) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            if (buttonElement) showCopied(buttonElement);
+        }).catch(() => {
+            fallbackCopy(text, buttonElement);
+        });
+    } else {
+        fallbackCopy(text, buttonElement);
+    }
+}
+
+function fallbackCopy(text, buttonElement) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.top = '-10000px';
+    textarea.style.left = '-10000px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        const success = document.execCommand('copy');
+        if (success && buttonElement) showCopied(buttonElement);
+        else if (!success) console.warn('Copy failed');
+    } catch (e) {
+        console.warn('Copy error:', e);
+    }
+    document.body.removeChild(textarea);
+}
+
+function showCopied(buttonElement) {
+    const img = buttonElement.querySelector('img');
+    if (img) {
+        const originalSrc = img.src;
+        img.src = 'img/mark.png';
+        setTimeout(() => { img.src = originalSrc; }, 1500);
+    }
+}
+
 function copyHintCode() {
     const task = shuffledTasks[currentIndex];
-    const code = task.fullHint;
-    navigator.clipboard.writeText(code).then(() => {
-        const btn = document.querySelector('.hint-copy-btn');
-        if (btn) {
-            const img = btn.querySelector('img');
-            if (img) img.src = 'img/mark.png';
-            setTimeout(() => { if (img) img.src = 'img/copy.png'; }, 1500);
-        }
-    }).catch(() => {
-        const textarea = document.createElement('textarea');
-        textarea.value = code;
-        document.body.appendChild(textarea);
-        textarea.select();
-        try {
-            document.execCommand('copy');
-            const btn = document.querySelector('.hint-copy-btn');
-            if (btn) {
-                const img = btn.querySelector('img');
-                if (img) img.src = 'img/mark.png';
-                setTimeout(() => { if (img) img.src = 'img/copy.png'; }, 1500);
+    const btn = document.querySelector('.hint-copy-btn');
+    if (btn) copyText(task.fullHint, btn);
+}
+
+function initCopyButtons() {
+    document.querySelectorAll('.editor-block .copy-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const block = this.closest('.editor-block');
+            if (!block) return;
+            const textarea = block.querySelector('textarea');
+            if (!textarea) return;
+            let code = '';
+            const cmInstance = block.querySelector('.CodeMirror');
+            if (cmInstance) {
+                const editor = cmInstance.CodeMirror;
+                if (editor && typeof editor.getValue === 'function') {
+                    code = editor.getValue();
+                }
             }
-        } catch (e) {
-            console.warn('Не удалось скопировать');
-        }
-        textarea.remove();
+            if (!code) code = textarea.value;
+            copyText(code, this);
+        });
     });
 }
 
@@ -331,4 +368,6 @@ window.onload = async function() {
         copyBtn.addEventListener('click', copyHintCode);
         hintTitle.appendChild(copyBtn);
     }
+
+    initCopyButtons();
 };
